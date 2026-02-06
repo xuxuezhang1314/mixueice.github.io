@@ -1,12 +1,4 @@
 {
-  "functions": {
-    "api/webhook.js": {
-      "runtime": "edge"
-    },
-    "api/setWebhook.js": {
-      "runtime": "edge"
-    }
-  },
   "rewrites": [
     {
       "source": "/",
@@ -14,4 +6,3 @@
     }
   ]
 }
-
