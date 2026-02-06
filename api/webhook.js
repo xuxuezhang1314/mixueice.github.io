@@ -68,4 +68,37 @@ export default async function handler(request) {
     const update = await request.json();
     
     if (!update.message || !update.message.text) {
+      return new Response('OK');
+    }
+    
+    const text = update.message.text.trim();
+    const chatId = update.message.chat.id.toString();
+    
+    if (chatId !== CONFIG.TELEGRAM_CHAT_ID) {
+      return new Response('Unauthorized');
+    }
+    
+    const match = text.match(/^(通过|拒绝)\s*(1[3-9]\d{9})$/);
+    if (!match) {
+      return new Response('OK');
+    }
+    
+    const action = match[1];
+    const phone = match[2];
+    
+    await updateJsonBin(phone, action);
+    await sendTelegramMessage(
+      `✅ <b>审核${action}成功</b>\n\n` +
+      `手机号：${phone}\n` +
+      `操作：${action}\n` +
+      `时间：${new Date().toLocaleString('zh-CN')}\n\n` +
+      `用户页面将自动更新状态`
+    );
+    
+    return new Response('OK');
+  } catch (err) {
+    console.error('Error:', err);
+    return new Response('Error', { status: 500 });
+  }
+}
 
